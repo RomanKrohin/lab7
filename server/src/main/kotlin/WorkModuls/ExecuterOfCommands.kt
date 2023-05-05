@@ -33,6 +33,7 @@ class ExecuterOfCommands : WorkWithHistory {
         workWithArrayHistory(command)
         val commandComponents = tokens.tokenizateCommand(command, history)
         val answer = chooseCommand.chooseCoomand(commandComponents, listOfOldCommand)
+        logger.log(Level.INFO, "Перенаправка ответа")
         return answer
     }
 

@@ -1,5 +1,4 @@
 import Collections.Collection
-import Network.ThreadHandler
 import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
 import WorkModuls.DatabaseHandler
@@ -12,27 +11,50 @@ import java.nio.channels.ServerSocketChannel
 import java.nio.channels.SocketChannel
 import java.sql.Connection
 import java.util.concurrent.Executors
+import java.util.concurrent.ForkJoinPool
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class Server(){
+class Server() {
 
-    val logger= Logger.getLogger("logger")
+    val logger = Logger.getLogger("logger")
+    val executorOfCommands = ExecuterOfCommands()
 
     init {
         logger.log(Level.INFO, "Старт сервера")
     }
 
 
-    fun startSever(collection: Collection<String, StudyGroup>, databaseHandler: DatabaseHandler, connection: Connection) {
+    fun startSever(
+        collection: Collection<String, StudyGroup>,
+        databaseHandler: DatabaseHandler,
+        connection: Connection,
+    ) {
         logger.log(Level.INFO, "Ожидание подключения")
         try {
             val serverSocketChannel = ServerSocketChannel.open()
             serverSocketChannel.bind(InetSocketAddress("localhost", 8000))
-            val executorService= Executors.newFixedThreadPool(3)
+            val executorService = Executors.newFixedThreadPool(3)
+            val forkJoinPool = ForkJoinPool.commonPool()
             while (serverSocketChannel != null) {
                 val clientSocketChannel = serverSocketChannel.accept()
-                executorService.submit(ThreadHandler(clientSocketChannel, collection, databaseHandler, connection))
+                executorService.submit {
+                    val task = handlerOfInput(clientSocketChannel)
+                    forkJoinPool.submit {
+                        Thread {
+                            handlerOfOutput(
+                                clientSocketChannel, executorOfCommands.reader(
+                                    collection,
+                                    task.describe,
+                                    task,
+                                    task.listOfCommands,
+                                    databaseHandler,
+                                    connection
+                                )
+                            )
+                        }.start()
+                    }
+                }
             }
             serverSocketChannel?.close()
         } catch (e: RuntimeException) {
@@ -40,4 +62,26 @@ class Server(){
         }
     }
 
+    fun handlerOfInput(
+        clientSocketChannel: SocketChannel,
+    ): Task {
+        logger.log(Level.INFO, "Получение информации")
+        try {
+            val objectInputStream = ObjectInputStream(clientSocketChannel.socket().getInputStream())
+            return objectInputStream.readObject() as Task
+        } catch (e: RuntimeException) {
+            logger.log(Level.SEVERE, "Ошибка получения информации")
+            throw e
+        }
+    }
+
+    fun handlerOfOutput(clientSocketChannel: SocketChannel, answer: Answer) {
+        logger.log(Level.INFO, "Передача информации")
+        try {
+            val objectOutputStream = ObjectOutputStream(clientSocketChannel.socket().getOutputStream())
+            objectOutputStream.writeObject(answer)
+        } catch (e: RuntimeException) {
+            logger.log(Level.SEVERE, "Ошибка передачи информации")
+        }
+    }
 }
