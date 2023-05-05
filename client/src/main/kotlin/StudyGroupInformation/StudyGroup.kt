@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 
 @Serializable
 data class StudyGroup(
+    private var id: Long = 0,
     private val name: String = "",
     private val coordinates: Coordinates,
     private val studentCount: Long,
@@ -12,10 +13,14 @@ data class StudyGroup(
     private val averageMark: Int,
     private val formOfEducation: FormOfEducation? = null,
     private val groupAdmin: Person,
+    var isSave: Boolean = false
 ): java.io.Serializable {
 
     private val localDateTime: LocalDateTime by lazy { java.time.LocalDateTime.now() }
-    private var id: Long = 0
+
+    init {
+        localDateTime
+    }
     fun setId(_id: Long) {
         id = _id
     }
@@ -51,4 +56,6 @@ data class StudyGroup(
     fun getAdmin(): Person {
         return groupAdmin
     }
+
+
 }

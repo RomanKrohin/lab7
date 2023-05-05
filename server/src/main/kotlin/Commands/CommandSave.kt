@@ -4,11 +4,6 @@ import Collections.Collection
 import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
 import WorkModuls.DatabaseHandler
-import com.charleskorn.kaml.Yaml
-import kotlinx.serialization.encodeToString
-import java.io.FileOutputStream
-import java.io.OutputStreamWriter
-import java.io.Writer
 import java.sql.Connection
 
 /**
@@ -32,9 +27,10 @@ class CommandSave(workCollection: Collection<String, StudyGroup>, workDatabaseHa
     override fun commandDo(key: String): Answer {
         val answer= Answer()
         return try {
+            databaseHandler.deleteStudyGroup(connection)
             collection.collection.values.stream().forEach {
                 databaseHandler.saveStudyGroup(it, connection)
-
+                it.isSave = true
             }
             answer
         } catch (e: Exception){

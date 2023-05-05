@@ -59,10 +59,10 @@ class ChooseCommand(
             "clear" to CommandClear(collection),
             "max_by_name" to CommandMaxName(collection),
             "print_field_descending_average_mark" to CommandPrintFieldDescendingAverageMark(collection),
-            "remove_greater_key" to CommandDeleteByMaxKey(collection),
-            "remove_lower_key" to CommandDeleteByMinKey(collection),
+            "remove_greater_key" to CommandDeleteByMaxKey(collection, databaseHandler, connection),
+            "remove_lower_key" to CommandDeleteByMinKey(collection, databaseHandler, connection),
             "count_less_than_group_admin" to CommandCountLessThanAdmin(collection),
-            "remove" to CommandRemove(collection),
+            "remove" to CommandRemove(collection, databaseHandler, connection),
             "update id" to CommandUpdateId(collection),
             "insert" to CommandInsert(collection, task)
         )

@@ -135,13 +135,15 @@ class Asker {
         println("Введите поля админа")
         val person = askPerson()
         return StudyGroup(
+            0L,
             name,
             coordinates,
             studentCount,
             shouldBeExpeled,
             averageMark,
             formOfEducation,
-            person
+            person,
+            false
         )
     }
 

@@ -12,6 +12,8 @@ import java.net.InetSocketAddress
 import java.nio.channels.ServerSocketChannel
 import java.nio.channels.SocketChannel
 import java.sql.Connection
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.system.exitProcess
@@ -31,7 +33,6 @@ class Server(){
         try {
             val serverSocketChannel = ServerSocketChannel.open()
             serverSocketChannel.bind(InetSocketAddress("localhost", 8000))
-            val br= BufferedReader(InputStreamReader(System.`in`))
             while (serverSocketChannel != null) {
                 val clientSocketChannel = serverSocketChannel.accept()
                 handlerOfInput(clientSocketChannel, collection, databaseHandler, connection)
