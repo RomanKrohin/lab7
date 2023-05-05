@@ -4,6 +4,7 @@ import Collections.Collection
 import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
 import WorkModuls.DatabaseHandler
+import WorkModuls.Task
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.*
@@ -12,14 +13,22 @@ import java.util.stream.Collectors
 /**
  * Класс команды, которая удаляет объекты, значение ключа которого больше чем у заданного
  */
-class CommandDeleteByMaxKey(workCollection: Collection<String, StudyGroup>, workDatabaseHandler: DatabaseHandler, workConnection: Connection): Command(){
+class CommandDeleteByMaxKey(
+    workCollection: Collection<String, StudyGroup>,
+    workDatabaseHandler: DatabaseHandler,
+    workConnection: Connection,
+    workTask: Task,
+) : Command() {
+    var task: Task
     var collection: Collection<String, StudyGroup>
     var databaseHandler: DatabaseHandler
     var connection: Connection
+
     init {
-        collection=workCollection
-        databaseHandler=workDatabaseHandler
-        connection= workConnection
+        task = workTask
+        collection = workCollection
+        databaseHandler = workDatabaseHandler
+        connection = workConnection
     }
 
     /**
@@ -32,7 +41,10 @@ class CommandDeleteByMaxKey(workCollection: Collection<String, StudyGroup>, work
         try {
             if (collection.collection.keys.contains(key.uppercase(Locale.getDefault()))) {
                 collection.collection.keys.stream().collect(Collectors.toList())
-                    .filter { it -> it.hashCode() > key.uppercase().hashCode() }.forEach{
+                    .filter { it ->
+                        it.hashCode() > key.uppercase().hashCode() && collection.collection.get(it)
+                            ?.getOwner() == task.login
+                    }.forEach {
                         collection.collection.get(it.uppercase(Locale.getDefault()))
                             ?.let { it1 -> databaseHandler.doStudyGroupNotSave(it1.getId(), connection) }
                         collection.collection.remove(key)

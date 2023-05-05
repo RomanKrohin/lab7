@@ -57,6 +57,7 @@ class ReaderOfCommands {
         }
         if (task.describe[0] == "insert") {
             task.studyGroup = asker.askStudyGroup()
+            task.studyGroup?.setOwner(client.login)
         }
         if (task.describe[0] == "registration" || task.describe[0] == "auto-authentication") {
             println("Enter login, after enter password")

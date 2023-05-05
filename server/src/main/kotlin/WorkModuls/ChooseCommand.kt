@@ -20,7 +20,7 @@ class ChooseCommand(
     collection: Collection<String, StudyGroup>,
     history: MutableList<String>,
     task: Task,
-    databaseHandler: DatabaseHandler, connection: Connection
+    databaseHandler: DatabaseHandler, connection: Connection,
 ) : CreateCommand {
     private var listOfCommand = createCommands(collection, history, task, databaseHandler, connection)
     private val logger = Logger.getLogger("logger")
@@ -48,7 +48,9 @@ class ChooseCommand(
     override fun createCommands(
         collection: Collection<String, StudyGroup>,
         history: MutableList<String>,
-        task: Task, databaseHandler: DatabaseHandler, connection: Connection
+        task: Task,
+        databaseHandler: DatabaseHandler,
+        connection: Connection,
     ): Map<String, Command> {
         return mapOf<String, Command>(
             "show" to CommandShow(collection),
@@ -56,14 +58,14 @@ class ChooseCommand(
             "history" to CommandHistory(collection),
             "help" to CommandHelp(),
             "info" to CommandInfo(collection),
-            "clear" to CommandClear(collection),
+            "clear" to CommandClear(collection, task),
             "max_by_name" to CommandMaxName(collection),
             "print_field_descending_average_mark" to CommandPrintFieldDescendingAverageMark(collection),
-            "remove_greater_key" to CommandDeleteByMaxKey(collection, databaseHandler, connection),
-            "remove_lower_key" to CommandDeleteByMinKey(collection, databaseHandler, connection),
+            "remove_greater_key" to CommandDeleteByMaxKey(collection, databaseHandler, connection, task),
+            "remove_lower_key" to CommandDeleteByMinKey(collection, databaseHandler, connection, task),
             "count_less_than_group_admin" to CommandCountLessThanAdmin(collection),
-            "remove" to CommandRemove(collection, databaseHandler, connection),
-            "update id" to CommandUpdateId(collection),
+            "remove" to CommandRemove(collection, databaseHandler, connection, task),
+            "update id" to CommandUpdateId(collection, task),
             "insert" to CommandInsert(collection, task),
             "registration" to CommandRegistrate(databaseHandler, connection),
             "auto-authentication" to CommandAutoAuthentication(databaseHandler, connection)

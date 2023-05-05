@@ -9,10 +9,12 @@ import java.util.stream.Collectors
 /**
  * Класс команды, которая обновляет id объекта коллекции по его ключу
  */
-class CommandUpdateId(workCollection: Collection<String, StudyGroup>) : Command() {
+class CommandUpdateId(workCollection: Collection<String, StudyGroup>, workTask: Task) : Command() {
+    var task: Task
     var collection: Collection<String, StudyGroup>
 
     init {
+        task = workTask
         collection = workCollection
     }
 
@@ -26,7 +28,8 @@ class CommandUpdateId(workCollection: Collection<String, StudyGroup>) : Command(
             val answer = Answer()
             val components = key.split(" ")
             collection.collection.values.stream().collect(Collectors.toList())
-                .filter { it -> it.getId() == components[0].toLong() }.forEach { it.setId(components[1].toLong()) }
+                .filter { it -> it.getId() == components[0].toLong() && it.getOwner() == task.login }
+                .forEach { it.setId(components[1].toLong()) }
             answer
 
         } catch (e: RuntimeException) {

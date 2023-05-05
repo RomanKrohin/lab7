@@ -53,7 +53,7 @@ class DatabaseHandler {
             preparedStatement.execute()
         }
         catch (e: SQLException){
-            throw SQLException()
+            throw e
         }
     }
 
@@ -69,7 +69,7 @@ class DatabaseHandler {
             }
         }
         catch (e: SQLException){
-            throw SQLException()
+            throw e
         }
         return false
     }
@@ -79,8 +79,8 @@ class DatabaseHandler {
             val preparedStatement =
                 connection.prepareStatement(
                     "insert into roman_schema.studyGroups " +
-                            "(name, coordinates_x, coordinates_y, studentscount, shouldbeexpelled, averagemark, formofeducation, adminname, adminweight, admincolor, admincountry, issave, id) " +
-                            "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, nextval('id_seq'));"
+                            "(name, coordinates_x, coordinates_y, studentscount, shouldbeexpelled, averagemark, formofeducation, adminname, adminweight, admincolor, admincountry, issave, owner, id) " +
+                            "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, nextval('id_seq'));"
                 )
             preparedStatement.setString(1, studyGroup.getName())
             preparedStatement.setFloat(2, studyGroup.getCoordinates().getX().toFloat())
@@ -94,6 +94,7 @@ class DatabaseHandler {
             preparedStatement.setString(10, studyGroup.getAdmin().getColor().toString())
             preparedStatement.setString(11, studyGroup.getAdmin().getCountry().toString())
             preparedStatement.setBoolean(12, true)
+            preparedStatement.setString(13, studyGroup.getOwner())
             val rowAffected = preparedStatement.executeUpdate()
             if (rowAffected == 0) {
                 throw SQLException()
@@ -128,7 +129,8 @@ class DatabaseHandler {
                     Color.valueOf(resultSet.getString("admincolor")),
                     Country.valueOf(resultSet.getString("admincountry"))
                 ),
-                resultSet.getBoolean("issave")
+                resultSet.getBoolean("issave"),
+                resultSet.getString("owner")
             )
             if (checkModule.check(studyGroup)) {
                 listOfStudyGroup.put("-${name}", studyGroup)

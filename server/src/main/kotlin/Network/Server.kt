@@ -2,7 +2,7 @@ import Collections.Collection
 import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
 import WorkModuls.DatabaseHandler
-import WorkModuls.ExecuterOfCommands
+import WorkModuls.ExecutorOfCommands
 import WorkModuls.Task
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -18,7 +18,7 @@ import java.util.logging.Logger
 class Server() {
 
     val logger = Logger.getLogger("logger")
-    val executorOfCommands = ExecuterOfCommands()
+    val executorOfCommands = ExecutorOfCommands()
 
     init {
         logger.log(Level.INFO, "Старт сервера")

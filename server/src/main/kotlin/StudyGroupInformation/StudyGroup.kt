@@ -13,7 +13,8 @@ data class StudyGroup(
     private val averageMark: Int,
     private val formOfEducation: FormOfEducation? = null,
     private val groupAdmin: Person,
-    var isSave: Boolean = false
+    var isSave: Boolean = false,
+    private var owner: String= ""
 ): java.io.Serializable {
 
     private val localDateTime: LocalDateTime by lazy { java.time.LocalDateTime.now() }
@@ -57,5 +58,11 @@ data class StudyGroup(
         return groupAdmin
     }
 
+    fun getOwner(): String{
+        return owner
+    }
 
+    fun setOwner(workOwner: String){
+        owner=workOwner
+    }
 }

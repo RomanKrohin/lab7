@@ -34,6 +34,8 @@ class Client {
                 if (task.describe[0] == "registration" || task.describe[0] == "auto-authentication") putLoginAndPassword(
                     task
                 )
+                task.login=login
+                task.password=password
                 objectOutputStream.writeObject(task)
                 inputSteamHandler(clientSocket)
 
