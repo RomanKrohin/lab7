@@ -34,7 +34,7 @@ class Server() {
         try {
             val serverSocketChannel = ServerSocketChannel.open()
             serverSocketChannel.bind(InetSocketAddress("localhost", 8000))
-            val executorService = Executors.newFixedThreadPool(3)
+            val executorService = Executors.newFixedThreadPool(10)
             val forkJoinPool = ForkJoinPool.commonPool()
             while (serverSocketChannel != null) {
                 val clientSocketChannel = serverSocketChannel.accept()

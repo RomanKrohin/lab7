@@ -5,10 +5,14 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
+import java.security.MessageDigest
 
 class Client {
 
-    val listOfNewCommands= mutableListOf<String>()
+    val listOfNewCommands = mutableListOf<String>()
+    var authorization: Boolean = false
+    var login = ""
+    var password = ""
 
     fun connection(): SocketChannel {
         return try {
@@ -27,8 +31,12 @@ class Client {
             val clientSocket = connection()
             if (clientSocket.isConnected) {
                 val objectOutputStream = ObjectOutputStream(clientSocket.socket().getOutputStream())
+                if (task.describe[0] == "registration" || task.describe[0] == "auto-authentication") putLoginAndPassword(
+                    task
+                )
                 objectOutputStream.writeObject(task)
                 inputSteamHandler(clientSocket)
+
             }
         } catch (e: Exception) {
             println("Bad output")
@@ -39,17 +47,22 @@ class Client {
         val objectInputStream = ObjectInputStream(clientSocket.socket().getInputStream())
         val answer = objectInputStream.readObject() as Answer
         listOfNewCommands.addAll(answer.listOfNewCommand)
-        println(answer.result)
+        if (answer.result == "Successfully registration" || answer.result == "Successfully auto-authentication") authorization=true
+            println(answer.result)
         clientSocket.close()
     }
 
-    fun returnNewCommands(): MutableList<String>{
+    fun returnNewCommands(): MutableList<String> {
         return listOfNewCommands
     }
 
-    fun resetNewCommands(){
+    fun resetNewCommands() {
         listOfNewCommands.clear()
     }
 
-
+    fun putLoginAndPassword(task: Task) {
+        val components = task.describe[1].split(" ")
+        login = components[0]
+        password = components[1]
+    }
 }

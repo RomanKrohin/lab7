@@ -33,7 +33,7 @@ class CommandSave(workCollection: Collection<String, StudyGroup>, workDatabaseHa
                 it.isSave = true
             }
             answer
-        } catch (e: Exception){
+        } catch (e: RuntimeException){
             answer.result="Command exception"
             answer
         }

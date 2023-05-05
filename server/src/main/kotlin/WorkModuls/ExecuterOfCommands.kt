@@ -28,13 +28,17 @@ class ExecuterOfCommands : WorkWithHistory {
         listOfOldCommand: MutableList<String>, databaseHandler: DatabaseHandler, connection: Connection,
     ): Answer {
         logger.log(Level.INFO, "Чтение команды")
-        val tokens = Tokenizator()
-        val chooseCommand = ChooseCommand(collection, history, task, databaseHandler, connection)
-        workWithArrayHistory(command)
-        val commandComponents = tokens.tokenizateCommand(command, history)
-        val answer = chooseCommand.chooseCoomand(commandComponents, listOfOldCommand)
-        logger.log(Level.INFO, "Перенаправка ответа")
-        return answer
+        return if (task.authorization || task.describe[0]=="registration" || task.describe[0]=="auto-authentication") {
+            val tokens = Tokenizator()
+            val chooseCommand = ChooseCommand(collection, history, task, databaseHandler, connection)
+            workWithArrayHistory(command)
+            val commandComponents = tokens.tokenizateCommand(command, history)
+            val answer = chooseCommand.chooseCoomand(commandComponents, listOfOldCommand)
+            logger.log(Level.INFO, "Перенаправка ответа")
+            answer
+        } else{
+            Answer("You need to log in. If you don't have an account, write \"registration\" and follow the instructions or if you have an account, write \"auto-authentication\"")
+        }
     }
 
     override fun workWithArrayHistory(coomand: MutableList<String>) {

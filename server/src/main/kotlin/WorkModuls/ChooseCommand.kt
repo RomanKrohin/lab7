@@ -64,7 +64,9 @@ class ChooseCommand(
             "count_less_than_group_admin" to CommandCountLessThanAdmin(collection),
             "remove" to CommandRemove(collection, databaseHandler, connection),
             "update id" to CommandUpdateId(collection),
-            "insert" to CommandInsert(collection, task)
+            "insert" to CommandInsert(collection, task),
+            "registration" to CommandRegistrate(databaseHandler, connection),
+            "auto-authentication" to CommandAutoAuthentication(databaseHandler, connection)
         )
     }
 

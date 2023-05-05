@@ -1,6 +1,7 @@
 package WorkModuls
 
 import Client.Client
+import java.security.MessageDigest
 import kotlin.system.exitProcess
 
 /**
@@ -8,7 +9,8 @@ import kotlin.system.exitProcess
  */
 class ReaderOfCommands {
 
-    val listOfCommands = mutableListOf("show", "info", "help", "history", "save", "clear", "exit")
+    val listOfCommands =
+        mutableListOf("show", "info", "help", "history", "save", "clear", "exit", "auto-authentication", "registration")
     val asker = Asker()
     val client = Client()
 
@@ -27,13 +29,14 @@ class ReaderOfCommands {
                 val listOfTasks =
                     readerOfScripts.readScript(commandComponents[1], tokens, mutableListOf())
                 for (i in listOfTasks) {
-                    addSpecialComponents(i)
+                    specialActions(i, asker)
                     client.outputStreamHandler(i)
                 }
             } else {
                 if (listOfCommands.contains(commandComponents[0])) {
-                    val task =Task(commandComponents, listOfCommands = listOfCommands)
-                    addSpecialComponents(task)
+                    val task =
+                        Task(commandComponents, listOfCommands = listOfCommands, authorization = client.authorization)
+                    specialActions(task, asker)
                     client.outputStreamHandler(task)
                     listOfCommands.addAll(client.returnNewCommands())
                     client.resetNewCommands()
@@ -44,7 +47,7 @@ class ReaderOfCommands {
         }
     }
 
-    fun addSpecialComponents(task: Task) {
+    fun specialActions(task: Task, asker: Asker) {
         if (task.describe[0] == "exit") {
             exitProcess(0)
         }
@@ -55,5 +58,17 @@ class ReaderOfCommands {
         if (task.describe[0] == "insert") {
             task.studyGroup = asker.askStudyGroup()
         }
+        if (task.describe[0] == "registration" || task.describe[0] == "auto-authentication") {
+            println("Enter login, after enter password")
+            task.describe.add("${asker.askLoginAndPasswordForRegistration()} ${sha384(asker.askLoginAndPasswordForRegistration())}")
+        }
     }
+
+    fun sha384(input: String): String {
+        val bytes = input.toByteArray()
+        val md = MessageDigest.getInstance("SHA-384")
+        val digest = md.digest(bytes)
+        return digest.fold("") { str, it -> str + "%02x".format(it) }
+    }
+
 }

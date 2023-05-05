@@ -165,4 +165,11 @@ class Asker {
         return readType(caster = toLongCaster, validator = { it > 0 })
     }
 
+
+    fun askLoginAndPasswordForRegistration():String{
+        return  readType(caster = { it }, validator = {it.isNotEmpty() && it.matches(Regex("[a-zA-Z0-9]{10,}"))})
+    }
+
+
+
 }

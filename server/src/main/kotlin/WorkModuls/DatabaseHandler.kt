@@ -44,6 +44,36 @@ class DatabaseHandler {
         }
     }
 
+    fun registrateUser(login: String, password: String, connection: Connection){
+        try{
+            val preparedStatement =
+                connection.prepareStatement("insert into roman_schema.users (login, password) values(?, ?)")
+            preparedStatement.setString(1, login)
+            preparedStatement.setString(2, password)
+            preparedStatement.execute()
+        }
+        catch (e: SQLException){
+            throw SQLException()
+        }
+    }
+
+    fun checkUser(login: String, password: String, connection: Connection): Boolean{
+        try{
+            val preparedStatement =
+                connection.prepareStatement("select count(*) from roman_schema.users where (login=? and password=?);")
+            preparedStatement.setString(1, login)
+            preparedStatement.setString(2, password)
+            val resultSet=preparedStatement.executeQuery()
+            while (resultSet.next()){
+                return (resultSet.getInt("count")==1)
+            }
+        }
+        catch (e: SQLException){
+            throw SQLException()
+        }
+        return false
+    }
+
     fun saveStudyGroup(studyGroup: StudyGroup, connection: Connection) {
         try {
             val preparedStatement =
