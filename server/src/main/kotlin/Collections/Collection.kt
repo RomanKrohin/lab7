@@ -1,5 +1,8 @@
 package Collections
 
+import StudyGroupInformation.StudyGroup
+import WorkModuls.DatabaseHandler
+import java.sql.Connection
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 
@@ -10,22 +13,22 @@ import java.util.concurrent.locks.ReentrantLock
  * @constructor Пустой
  * @property Collections
  */
-class Collection<String, StudyGroup> {
+class Collection<String> {
 
     var collection = Hashtable<String, StudyGroup>()
-    private val lock= ReentrantLock()
+    private val lock = ReentrantLock()
 
     /**
      * Метод для добавления объекта в коллекцию
      * @param studyGroup
      * @param key
      */
-    fun add(studyGroup: StudyGroup, key: String) {
+    fun add(studyGroup: StudyGroup, key: String, databaseHandler: DatabaseHandler, connection: Connection) {
         lock.lock()
         try {
+            databaseHandler.saveStudyGroup(studyGroup, connection)
             collection[key] = studyGroup
-        }
-        finally {
+        } finally {
             lock.unlock()
         }
     }
@@ -34,12 +37,12 @@ class Collection<String, StudyGroup> {
      * Метод удаления объекта из коллекции
      * @param key
      */
-    fun remove(key: String) {
+    fun remove(key: String, databaseHandler: DatabaseHandler, connection: Connection) {
         lock.lock()
         try {
+            collection.get(key)?.let { databaseHandler.doStudyGroupNotSave(it.getId(), connection) }
             collection.remove(key)
-        }
-        finally {
+        } finally {
             lock.unlock()
         }
     }

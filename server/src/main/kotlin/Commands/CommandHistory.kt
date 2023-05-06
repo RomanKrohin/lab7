@@ -8,8 +8,8 @@ import java.lang.RuntimeException
 /**
  * Класс команды, который выводит последние 12 введенных команд
  */
-class CommandHistory(workCollection: Collection<String, StudyGroup>) : Command(){
-    var collection: Collection<String, StudyGroup>
+class CommandHistory(workCollection: Collection<String>) : Command(){
+    var collection: Collection<String>
 
     init {
         collection = workCollection

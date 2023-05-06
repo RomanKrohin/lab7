@@ -9,9 +9,9 @@ import java.util.stream.Collectors
 /**
  * Класс команды, которая обновляет id объекта коллекции по его ключу
  */
-class CommandUpdateId(workCollection: Collection<String, StudyGroup>, workTask: Task) : Command() {
+class CommandUpdateId(workCollection: Collection<String>, workTask: Task) : Command() {
     var task: Task
-    var collection: Collection<String, StudyGroup>
+    var collection: Collection<String>
 
     init {
         task = workTask

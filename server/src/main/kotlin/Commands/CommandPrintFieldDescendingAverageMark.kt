@@ -9,8 +9,8 @@ import java.util.stream.Collectors
 /**
  * Класс команды, которая выводит в порядке убывания значение поля average mark всех объектов
  */
-class CommandPrintFieldDescendingAverageMark(workCollection: Collections.Collection<String, StudyGroup>) : Command(){
-    var collection: Collection<String, StudyGroup>
+class CommandPrintFieldDescendingAverageMark(workCollection: Collections.Collection<String>) : Command(){
+    var collection: Collection<String>
 
     init {
         collection = workCollection

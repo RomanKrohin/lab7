@@ -4,16 +4,27 @@ import Collections.Collection
 import StudyGroupInformation.StudyGroup
 import WorkModuls.*
 import java.lang.RuntimeException
+import java.sql.Connection
 
 /**
  * Класс команды, которая добавляет объект по его ключу
  */
-class CommandInsert(workCollection: Collection<String, StudyGroup>, workTask: Task): Command(){
-    var collection: Collection<String, StudyGroup>
+class CommandInsert(
+    workCollection: Collection<String>,
+    workDatabaseHandler: DatabaseHandler,
+    workConnection: Connection,
+    workTask: Task,
+) : Command() {
     var task: Task
+    var collection: Collection<String>
+    var databaseHandler: DatabaseHandler
+    var connection: Connection
+
     init {
-        collection=workCollection
-        task=workTask
+        task = workTask
+        collection = workCollection
+        databaseHandler = workDatabaseHandler
+        connection = workConnection
     }
 
 
@@ -31,7 +42,7 @@ class CommandInsert(workCollection: Collection<String, StudyGroup>, workTask: Ta
             }
             task.studyGroup?.let {
                 it.setId(listOfId.max()+1)
-                collection.add(it, key)
+                collection.add(it, key, databaseHandler, connection)
             }
             answer
         } catch (e: RuntimeException){

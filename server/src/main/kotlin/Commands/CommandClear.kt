@@ -10,9 +10,9 @@ import java.util.stream.Collectors
 /**
  * Класс команды очищающая коллекцию
  */
-class CommandClear(workCollection: Collection<String, StudyGroup>, workTask: Task) : Command() {
+class CommandClear(workCollection: Collection<String>, workTask: Task) : Command() {
     var task: Task
-    var collection: Collection<String, StudyGroup>
+    var collection: Collection<String>
 
     init {
         task = workTask

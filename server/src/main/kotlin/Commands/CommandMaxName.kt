@@ -10,8 +10,8 @@ import java.lang.RuntimeException
 /**
  * Класс команды, которая выводит объект, значение поля name которого наибольшее
  */
-class CommandMaxName(workCollection: Collections.Collection<String, StudyGroup>) : Command() {
-    var collection: Collection<String, StudyGroup>
+class CommandMaxName(workCollection: Collections.Collection<String>) : Command() {
+    var collection: Collection<String>
 
     init {
         collection = workCollection

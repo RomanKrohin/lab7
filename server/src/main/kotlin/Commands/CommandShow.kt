@@ -11,8 +11,8 @@ import java.util.stream.Collectors
  * Класс команды, которая выводит объекты, сохраненные в коллекции, в текстовом формате
  */
 
-class CommandShow(workCollection: Collection<String, StudyGroup>) : Command() {
-    var collection: Collection<String, StudyGroup>
+class CommandShow(workCollection: Collection<String>) : Command() {
+    var collection: Collection<String>
 
     init {
         collection = workCollection

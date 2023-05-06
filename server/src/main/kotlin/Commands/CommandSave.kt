@@ -9,8 +9,8 @@ import java.sql.Connection
 /**
  * Класс команды, которая очищает файл и пишет, переводит объекты, сохраненные в коллекции, в строчный формат и записывает их в файл
  */
-class CommandSave(workCollection: Collection<String, StudyGroup>, workDatabaseHandler: DatabaseHandler, workConnection: Connection): Command(){
-    var collection: Collection<String, StudyGroup>
+class CommandSave(workCollection: Collection<String>, workDatabaseHandler: DatabaseHandler, workConnection: Connection): Command(){
+    var collection: Collection<String>
     var databaseHandler: DatabaseHandler
     var connection: Connection
     init {
@@ -27,7 +27,6 @@ class CommandSave(workCollection: Collection<String, StudyGroup>, workDatabaseHa
     override fun commandDo(key: String): Answer {
         val answer= Answer()
         return try {
-            databaseHandler.deleteStudyGroup(connection)
             collection.collection.values.stream().forEach {
                 databaseHandler.saveStudyGroup(it, connection)
                 it.isSave = true

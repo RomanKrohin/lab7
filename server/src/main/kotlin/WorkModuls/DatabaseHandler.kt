@@ -8,12 +8,11 @@ import java.util.Hashtable
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class DatabaseHandler {
+class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
 
-    val user = "postgres"
-    val password = "MtCI_0609"
-    val schema = "roman_schema"
-    val url = "jdbc:postgresql://localhost:5432/roman"
+    val user = workUser
+    val password = workPassword
+    val url = workUrl
     val logger = Logger.getLogger("logger")
 
     fun connect(): Connection {
@@ -26,9 +25,10 @@ class DatabaseHandler {
         }
     }
 
-    fun deleteStudyGroup(connection: Connection){
+    fun deleteStudyGroup(connection: Connection, id: Long){
         try {
-            val preparedStatement= connection.prepareStatement("delete from roman_schema.studyGroups where(roman_schema.studyGroups.issave=false);")
+            val preparedStatement= connection.prepareStatement("delete from roman_schema.studyGroups where(roman_schema.studyGroups.issave=false and roman_schema.studyGroups.id=?);")
+            preparedStatement.setLong(1, id)
             preparedStatement.execute()
         } catch (e: SQLException) {
             logger.log(Level.SEVERE, "Exception when delete Study Group")

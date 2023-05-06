@@ -8,9 +8,9 @@ import java.lang.RuntimeException
 /**
  * Класс команды, которая выводит информацию о коллекции
  */
-class CommandInfo(workCollection: Collection<String, StudyGroup>) : Command() {
+class CommandInfo(workCollection: Collection<String>) : Command() {
 
-    var collection: Collection<String, StudyGroup>
+    var collection: Collection<String>
     var key: String = null.toString()
 
     init {

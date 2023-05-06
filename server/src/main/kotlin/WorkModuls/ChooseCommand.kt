@@ -17,7 +17,7 @@ import java.util.stream.Collectors
  * @param pathOfFile
  */
 class ChooseCommand(
-    collection: Collection<String, StudyGroup>,
+    collection: Collection<String>,
     history: MutableList<String>,
     task: Task,
     databaseHandler: DatabaseHandler, connection: Connection,
@@ -46,7 +46,7 @@ class ChooseCommand(
     }
 
     override fun createCommands(
-        collection: Collection<String, StudyGroup>,
+        collection: Collection<String>,
         history: MutableList<String>,
         task: Task,
         databaseHandler: DatabaseHandler,
@@ -66,7 +66,7 @@ class ChooseCommand(
             "count_less_than_group_admin" to CommandCountLessThanAdmin(collection),
             "remove" to CommandRemove(collection, databaseHandler, connection, task),
             "update id" to CommandUpdateId(collection, task),
-            "insert" to CommandInsert(collection, task),
+            "insert" to CommandInsert(collection, databaseHandler, connection, task),
             "registration" to CommandRegistrate(databaseHandler, connection),
             "auto-authentication" to CommandAutoAuthentication(databaseHandler, connection)
         )

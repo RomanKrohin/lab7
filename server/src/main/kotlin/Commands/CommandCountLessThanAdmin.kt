@@ -12,8 +12,8 @@ import java.util.stream.Collectors
 /**
  * Класс команды, которая выводит объекты значение поля group admin меньше чем у заданного
  */
-class CommandCountLessThanAdmin(workCollection: Collection<String, StudyGroup>) : Command(){
-    var collection: Collection<String, StudyGroup>
+class CommandCountLessThanAdmin(workCollection: Collection<String>) : Command(){
+    var collection: Collection<String>
 
     init {
         collection = workCollection

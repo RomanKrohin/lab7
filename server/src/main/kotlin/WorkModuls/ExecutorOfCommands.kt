@@ -22,7 +22,7 @@ class ExecutorOfCommands : WorkWithHistory {
      * @param path
      */
     fun reader(
-        collection: Collection<String, StudyGroup>,
+        collection: Collection<String>,
         command: MutableList<String>,
         task: Task,
         listOfOldCommand: MutableList<String>, databaseHandler: DatabaseHandler, connection: Connection,

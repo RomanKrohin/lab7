@@ -14,13 +14,13 @@ import java.util.*
  */
 
 class CommandRemove(
-    workCollection: Collection<String, StudyGroup>,
+    workCollection: Collection<String>,
     workDatabaseHandler: DatabaseHandler,
     workConnection: Connection,
     workTask: Task
 ) : Command() {
     var task: Task
-    var collection: Collection<String, StudyGroup>
+    var collection: Collection<String>
     var databaseHandler: DatabaseHandler
     var connection: Connection
 
@@ -40,7 +40,7 @@ class CommandRemove(
         val answer = Answer()
         return try {
             collection.collection.get(key.uppercase(Locale.getDefault()))?.let { databaseHandler.doStudyGroupNotSave(it.getId(), connection) }
-            if (collection.collection.get(key)?.getOwner()==task.login) collection.remove(key.uppercase(Locale.getDefault()))
+            if (collection.collection.get(key)?.getOwner()==task.login) collection.remove(key.uppercase(Locale.getDefault()), databaseHandler, connection)
             answer
         } catch (e: RuntimeException) {
             answer.result = "Command exception"

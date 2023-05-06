@@ -12,13 +12,19 @@ import java.nio.channels.SocketChannel
 import java.sql.Connection
 import java.util.concurrent.Executors
 import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.LinkedBlockingQueue
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class Server() {
+class Server(workPort: String) {
 
     val logger = Logger.getLogger("logger")
     val executorOfCommands = ExecutorOfCommands()
+    val port: String = workPort
+    private val fixedThreadPool = Executors.newFixedThreadPool(10)
+    private val forkJoinPool = ForkJoinPool.commonPool()
+    private val blockingQueueTask = LinkedBlockingQueue<Task>()
+    private val blockingQueueAnswer = LinkedBlockingQueue<Answer>()
 
     init {
         logger.log(Level.INFO, "Старт сервера")
@@ -26,35 +32,23 @@ class Server() {
 
 
     fun startSever(
-        collection: Collection<String, StudyGroup>,
+        collection: Collection<String>,
         databaseHandler: DatabaseHandler,
         connection: Connection,
     ) {
         logger.log(Level.INFO, "Ожидание подключения")
         try {
             val serverSocketChannel = ServerSocketChannel.open()
-            serverSocketChannel.bind(InetSocketAddress("localhost", 8000))
+            serverSocketChannel.bind(InetSocketAddress("localhost", port.toInt()))
             val executorService = Executors.newFixedThreadPool(10)
             val forkJoinPool = ForkJoinPool.commonPool()
             while (serverSocketChannel != null) {
                 val clientSocketChannel = serverSocketChannel.accept()
-                executorService.submit {
-                    val task = handlerOfInput(clientSocketChannel)
-                    forkJoinPool.submit {
-                        Thread {
-                            handlerOfOutput(
-                                clientSocketChannel, executorOfCommands.reader(
-                                    collection,
-                                    task.describe,
-                                    task,
-                                    task.listOfCommands,
-                                    databaseHandler,
-                                    connection
-                                )
-                            )
-                        }.start()
-                    }
-                }
+                forkJoinPool.submit()
+                { handlerOfInput(clientSocketChannel) }
+                forkJoinPool.submit()
+                { processRequests(collection, databaseHandler, connection) }
+                var sendThread = Thread { handlerOfOutput(clientSocketChannel) }.start()
             }
             serverSocketChannel?.close()
         } catch (e: RuntimeException) {
@@ -62,24 +56,38 @@ class Server() {
         }
     }
 
+    fun processRequests(collection: Collection<String>, databaseHandler: DatabaseHandler, connection: Connection) {
+        val task = blockingQueueTask.take()
+        blockingQueueAnswer.put(
+            executorOfCommands.reader(
+                collection,
+                task.describe,
+                task,
+                task.listOfCommands,
+                databaseHandler,
+                connection
+            )
+        )
+    }
+
     fun handlerOfInput(
         clientSocketChannel: SocketChannel,
-    ): Task {
+    ) {
         logger.log(Level.INFO, "Получение информации")
         try {
             val objectInputStream = ObjectInputStream(clientSocketChannel.socket().getInputStream())
-            return objectInputStream.readObject() as Task
+            blockingQueueTask.put(objectInputStream.readObject() as Task)
         } catch (e: RuntimeException) {
             logger.log(Level.SEVERE, "Ошибка получения информации")
             throw e
         }
     }
 
-    fun handlerOfOutput(clientSocketChannel: SocketChannel, answer: Answer) {
+    fun handlerOfOutput(clientSocketChannel: SocketChannel) {
         logger.log(Level.INFO, "Передача информации")
         try {
             val objectOutputStream = ObjectOutputStream(clientSocketChannel.socket().getOutputStream())
-            objectOutputStream.writeObject(answer)
+            objectOutputStream.writeObject(blockingQueueAnswer.take())
         } catch (e: RuntimeException) {
             logger.log(Level.SEVERE, "Ошибка передачи информации")
         }

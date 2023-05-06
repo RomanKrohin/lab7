@@ -15,7 +15,7 @@ interface CreateCommand {
      * @return Map<String, Command>
      */
     fun createCommands(
-        collection: Collections.Collection<String, StudyGroup>,
+        collection: Collections.Collection<String>,
         history: MutableList<String>,
         task: Task, databaseHandler: DatabaseHandler, connection: Connection
     ): Map<String, Command>

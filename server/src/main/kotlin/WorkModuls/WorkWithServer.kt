@@ -11,5 +11,5 @@ interface WorkWithServer {
     /**
      * Метод инициализации выборки команды
      */
-    fun serverWork(collection: Collection<String, StudyGroup>, path: String)
+    fun serverWork(collection: Collection<String>, path: String)
 }
