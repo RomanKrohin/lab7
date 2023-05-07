@@ -2,8 +2,6 @@ package WorkModuls
 
 import Collections.Collection
 import Commands.*
-import StudyGroupInformation.StudyGroup
-import java.nio.channels.SocketChannel
 import java.sql.Connection
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -16,7 +14,7 @@ import java.util.stream.Collectors
  * @param pathsForExecuteScripts
  * @param pathOfFile
  */
-class ChooseCommand(
+class CommandHandler(
     collection: Collection<String>,
     history: MutableList<String>,
     task: Task,

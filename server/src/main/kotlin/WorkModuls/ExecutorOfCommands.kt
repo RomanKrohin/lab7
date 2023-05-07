@@ -2,7 +2,6 @@ package WorkModuls
 
 import Collections.Collection
 import Commands.WorkWithHistory
-import StudyGroupInformation.StudyGroup
 import java.sql.Connection
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -33,10 +32,10 @@ class ExecutorOfCommands : WorkWithHistory {
             )
         ) {
             val tokens = Tokenizator()
-            val chooseCommand = ChooseCommand(collection, history, task, databaseHandler, connection)
+            val commandHandler = CommandHandler(collection, history, task, databaseHandler, connection)
             workWithArrayHistory(command)
             val commandComponents = tokens.tokenizateCommand(command, history)
-            val answer = chooseCommand.chooseCoomand(commandComponents, listOfOldCommand)
+            val answer = commandHandler.chooseCoomand(commandComponents, listOfOldCommand)
             logger.log(Level.INFO, "Перенаправка ответа")
             answer
         } else {
