@@ -21,7 +21,7 @@ class Server(workPort: String) {
     val logger = Logger.getLogger("logger")
     val executorOfCommands = ExecutorOfCommands()
     val port: String = workPort
-    private val fixedThreadPool = Executors.newFixedThreadPool(10)
+    private val fixJoinPool = Executors.newFixedThreadPool(10)
     private val forkJoinPool = ForkJoinPool.commonPool()
     private val blockingQueueTask = LinkedBlockingQueue<Task>()
     private val blockingQueueAnswer = LinkedBlockingQueue<Answer>()
@@ -40,11 +40,9 @@ class Server(workPort: String) {
         try {
             val serverSocketChannel = ServerSocketChannel.open()
             serverSocketChannel.bind(InetSocketAddress("localhost", port.toInt()))
-            val executorService = Executors.newFixedThreadPool(10)
-            val forkJoinPool = ForkJoinPool.commonPool()
             while (serverSocketChannel != null) {
                 val clientSocketChannel = serverSocketChannel.accept()
-                forkJoinPool.submit()
+                fixJoinPool.submit()
                 { handlerOfInput(clientSocketChannel) }
                 forkJoinPool.submit()
                 { processRequests(collection, databaseHandler, connection) }
