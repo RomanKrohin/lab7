@@ -14,22 +14,35 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
     val password = workPassword
     val url = workUrl
     val logger = Logger.getLogger("logger")
+    val connection: Connection= DriverManager.getConnection(url, user, password)
+    val SELECT_ALL_STUDYGROUP = connection.prepareStatement("SELECT * FROM roman_schema.studyGroups;")
+    val DELETE_NOTSAVE_GROUPS= connection.prepareStatement("delete from roman_schema.studyGroups where(roman_schema.studyGroups.issave=false);")
+    val DO_STUDYGRIUP_NOTSAVE= connection.prepareStatement("update roman_schema.studyGroups set issave=false where(roman_schema.studyGroups.id=?);")
+    val DO_STUDYGROUP_SAVE= connection.prepareStatement("update roman_schema.studyGroups set issave=true where(roman_schema.studyGroups.id=?);")
+    val REGISTRATE_USER= connection.prepareStatement("insert into roman_schema.users (login, password) values(?, ?)")
+    val CHECK_USER= connection.prepareStatement("select count(*) from roman_schema.users where (login=? and password=?);")
+    val INSERT_STUDYGROUP= connection.prepareStatement("insert into roman_schema.studyGroups " +
+            "(name, coordinates_x, coordinates_y, studentscount, shouldbeexpelled, averagemark, formofeducation, adminname, adminweight, admincolor, admincountry, issave, owner, id) " +
+            "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, nextval('id_seq'));")
 
     fun connect(): Connection {
         try {
-            val connection = DriverManager.getConnection(url, user, password)
-            logger.log(Level.INFO, "Successfully connect to database")
-            return connection
+            if (!connection.isClosed) {
+                logger.log(Level.INFO, "Successfully connect to database")
+                return connection
+            }
+            else{
+                throw SQLException()
+            }
         } catch (e: SQLException) {
+            logger.log(Level.SEVERE, "Something wrong with database")
             throw e
         }
     }
 
-    fun deleteStudyGroup(connection: Connection, id: Long){
+    fun deleteNotSaveStudyGroups(connection: Connection){
         try {
-            val preparedStatement= connection.prepareStatement("delete from roman_schema.studyGroups where(roman_schema.studyGroups.issave=false and roman_schema.studyGroups.id=?);")
-            preparedStatement.setLong(1, id)
-            preparedStatement.execute()
+            DELETE_NOTSAVE_GROUPS.execute()
         } catch (e: SQLException) {
             logger.log(Level.SEVERE, "Exception when delete Study Group")
         }
@@ -37,8 +50,17 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
 
     fun doStudyGroupNotSave(id: Long, connection: Connection ){
         try {
-            val preparedStatement= connection.prepareStatement("update roman_schema.studyGroups set issave=false where(roman_schema.studyGroups.id=${id});")
-            preparedStatement.execute()
+            DO_STUDYGRIUP_NOTSAVE.setLong(1, id)
+            DELETE_NOTSAVE_GROUPS.execute()
+        } catch (e: SQLException) {
+            throw e
+        }
+    }
+
+    fun doStudyGroupSave(id: Long, connection: Connection ){
+        try {
+            DO_STUDYGROUP_SAVE.setLong(1, id)
+            DO_STUDYGROUP_SAVE.execute()
         } catch (e: SQLException) {
             throw e
         }
@@ -46,11 +68,9 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
 
     fun registrateUser(login: String, password: String, connection: Connection){
         try{
-            val preparedStatement =
-                connection.prepareStatement("insert into roman_schema.users (login, password) values(?, ?)")
-            preparedStatement.setString(1, login)
-            preparedStatement.setString(2, password)
-            preparedStatement.execute()
+            REGISTRATE_USER.setString(1, login)
+            REGISTRATE_USER.setString(2, password)
+            REGISTRATE_USER.execute()
         }
         catch (e: SQLException){
             throw e
@@ -59,11 +79,9 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
 
     fun checkUser(login: String, password: String, connection: Connection): Boolean{
         try{
-            val preparedStatement =
-                connection.prepareStatement("select count(*) from roman_schema.users where (login=? and password=?);")
-            preparedStatement.setString(1, login)
-            preparedStatement.setString(2, password)
-            val resultSet=preparedStatement.executeQuery()
+            CHECK_USER.setString(1, login)
+            CHECK_USER.setString(2, password)
+            val resultSet=CHECK_USER.executeQuery()
             while (resultSet.next()){
                 return (resultSet.getInt("count")==1)
             }
@@ -74,28 +92,22 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         return false
     }
 
-    fun saveStudyGroup(studyGroup: StudyGroup, connection: Connection) {
+    fun putStudyGroup(studyGroup: StudyGroup, connection: Connection, issave: Boolean) {
         try {
-            val preparedStatement =
-                connection.prepareStatement(
-                    "insert into roman_schema.studyGroups " +
-                            "(name, coordinates_x, coordinates_y, studentscount, shouldbeexpelled, averagemark, formofeducation, adminname, adminweight, admincolor, admincountry, issave, owner, id) " +
-                            "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, nextval('id_seq'));"
-                )
-            preparedStatement.setString(1, studyGroup.getName())
-            preparedStatement.setFloat(2, studyGroup.getCoordinates().getX().toFloat())
-            preparedStatement.setFloat(3, studyGroup.getCoordinates().getY().toFloat())
-            preparedStatement.setLong(4, studyGroup.getStudentcount())
-            preparedStatement.setInt(5, studyGroup.getShouldBeExpelled())
-            preparedStatement.setInt(6, studyGroup.getAverageMark())
-            preparedStatement.setString(7, studyGroup.getFormOfEducation().toString())
-            preparedStatement.setString(8, studyGroup.getAdmin().getName())
-            preparedStatement.setInt(9, studyGroup.getAdmin().getWeight())
-            preparedStatement.setString(10, studyGroup.getAdmin().getColor().toString())
-            preparedStatement.setString(11, studyGroup.getAdmin().getCountry().toString())
-            preparedStatement.setBoolean(12, true)
-            preparedStatement.setString(13, studyGroup.getOwner())
-            val rowAffected = preparedStatement.executeUpdate()
+            INSERT_STUDYGROUP.setString(1, studyGroup.getName())
+            INSERT_STUDYGROUP.setFloat(2, studyGroup.getCoordinates().getX().toFloat())
+            INSERT_STUDYGROUP.setFloat(3, studyGroup.getCoordinates().getY().toFloat())
+            INSERT_STUDYGROUP.setLong(4, studyGroup.getStudentcount())
+            INSERT_STUDYGROUP.setInt(5, studyGroup.getShouldBeExpelled())
+            INSERT_STUDYGROUP.setInt(6, studyGroup.getAverageMark())
+            INSERT_STUDYGROUP.setString(7, studyGroup.getFormOfEducation().toString())
+            INSERT_STUDYGROUP.setString(8, studyGroup.getAdmin().getName())
+            INSERT_STUDYGROUP.setInt(9, studyGroup.getAdmin().getWeight())
+            INSERT_STUDYGROUP.setString(10, studyGroup.getAdmin().getColor().toString())
+            INSERT_STUDYGROUP.setString(11, studyGroup.getAdmin().getCountry().toString())
+            INSERT_STUDYGROUP.setBoolean(12, issave)
+            INSERT_STUDYGROUP.setString(13, studyGroup.getOwner())
+            val rowAffected = INSERT_STUDYGROUP.executeUpdate()
             if (rowAffected == 0) {
                 throw SQLException()
             }
@@ -108,9 +120,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         val checkModule = CheckModule()
         val listOfStudyGroup = Hashtable<String, StudyGroup>()
         val listOfId = mutableListOf<Long>(0)
-        val SELECT_ALL_STUDYGROUP = "SELECT * FROM roman_schema.studyGroups;"
-        val preparedStatement = connection.prepareStatement(SELECT_ALL_STUDYGROUP)
-        val resultSet = preparedStatement.executeQuery()
+        val resultSet= SELECT_ALL_STUDYGROUP.executeQuery()
         while (resultSet.next()) {
             val name = resultSet.getString("name")
             var formOfEducation: FormOfEducation? = null

@@ -45,9 +45,7 @@ class CommandDeleteByMinKey(
                         it.hashCode() < key.uppercase().hashCode() && collection.collection.get(it)
                             ?.getOwner() == task.login
                     }.forEach {
-                        collection.collection.get(it.uppercase(Locale.getDefault()))
-                            ?.let { it1 -> databaseHandler.doStudyGroupNotSave(it1.getId(), connection) }
-                        collection.collection.remove(key)
+                        collection.remove(it, databaseHandler, connection)
                     }
             }
             return answer

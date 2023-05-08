@@ -26,7 +26,7 @@ class Collection<String> {
     fun add(studyGroup: StudyGroup, key: String, databaseHandler: DatabaseHandler, connection: Connection) {
         lock.lock()
         try {
-            databaseHandler.saveStudyGroup(studyGroup, connection)
+            databaseHandler.putStudyGroup(studyGroup, connection, studyGroup.isSave)
             collection[key] = studyGroup
         } finally {
             lock.unlock()

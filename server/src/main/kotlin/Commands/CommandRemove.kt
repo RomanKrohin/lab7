@@ -17,7 +17,7 @@ class CommandRemove(
     workCollection: Collection<String>,
     workDatabaseHandler: DatabaseHandler,
     workConnection: Connection,
-    workTask: Task
+    workTask: Task,
 ) : Command() {
     var task: Task
     var collection: Collection<String>
@@ -25,7 +25,7 @@ class CommandRemove(
     var connection: Connection
 
     init {
-        task= workTask
+        task = workTask
         collection = workCollection
         databaseHandler = workDatabaseHandler
         connection = workConnection
@@ -39,8 +39,7 @@ class CommandRemove(
     override fun commandDo(key: String): Answer {
         val answer = Answer()
         return try {
-            collection.collection.get(key.uppercase(Locale.getDefault()))?.let { databaseHandler.doStudyGroupNotSave(it.getId(), connection) }
-            if (collection.collection.get(key)?.getOwner()==task.login) collection.remove(key.uppercase(Locale.getDefault()), databaseHandler, connection)
+            collection.remove(key.uppercase(), databaseHandler, connection)
             answer
         } catch (e: RuntimeException) {
             answer.result = "Command exception"

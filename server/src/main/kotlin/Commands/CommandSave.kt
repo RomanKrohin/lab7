@@ -1,7 +1,6 @@
 package Commands
 
 import Collections.Collection
-import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
 import WorkModuls.DatabaseHandler
 import java.sql.Connection
@@ -28,9 +27,11 @@ class CommandSave(workCollection: Collection<String>, workDatabaseHandler: Datab
         val answer= Answer()
         return try {
             collection.collection.values.stream().forEach {
-                databaseHandler.saveStudyGroup(it, connection)
                 it.isSave = true
+                databaseHandler.doStudyGroupSave(it.getId(), connection)
+
             }
+            databaseHandler.deleteNotSaveStudyGroups(connection)
             answer
         } catch (e: RuntimeException){
             answer.result="Command exception"
