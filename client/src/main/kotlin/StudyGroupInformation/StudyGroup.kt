@@ -14,14 +14,15 @@ data class StudyGroup(
     private val formOfEducation: FormOfEducation? = null,
     private val groupAdmin: Person,
     var isSave: Boolean = false,
-    private var owner: String= ""
-): java.io.Serializable {
+    private var owner: String = "",
+) : java.io.Serializable {
 
     private val localDateTime: LocalDateTime by lazy { java.time.LocalDateTime.now() }
 
     init {
         localDateTime
     }
+
     fun setId(_id: Long) {
         id = _id
     }
@@ -58,11 +59,11 @@ data class StudyGroup(
         return groupAdmin
     }
 
-    fun getOwner(): String{
+    fun getOwner(): String {
         return owner
     }
 
-    fun setOwner(workOwner: String){
-        owner=workOwner
+    fun setOwner(workOwner: String) {
+        owner = workOwner
     }
 }

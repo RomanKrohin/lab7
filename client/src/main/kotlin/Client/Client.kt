@@ -5,7 +5,6 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.InetSocketAddress
 import java.nio.channels.SocketChannel
-import java.security.MessageDigest
 
 class Client {
 
@@ -26,7 +25,7 @@ class Client {
         }
     }
 
-    fun outputStreamHandler(task: Task) {
+    fun sendTask(task: Task) {
         try {
             val clientSocket = connection()
             if (clientSocket.isConnected) {
@@ -34,10 +33,10 @@ class Client {
                 if (task.describe[0] == "registration" || task.describe[0] == "auto-authentication") putLoginAndPassword(
                     task
                 )
-                task.login=login
-                task.password=password
+                task.login = login
+                task.password = password
                 objectOutputStream.writeObject(task)
-                inputSteamHandler(clientSocket)
+                getAnswer(clientSocket)
 
             }
         } catch (e: Exception) {
@@ -45,12 +44,13 @@ class Client {
         }
     }
 
-    fun inputSteamHandler(clientSocket: SocketChannel) {
+    fun getAnswer(clientSocket: SocketChannel) {
         val objectInputStream = ObjectInputStream(clientSocket.socket().getInputStream())
         val answer = objectInputStream.readObject() as Answer
         listOfNewCommands.addAll(answer.listOfNewCommand)
-        if (answer.result == "Successfully registration" || answer.result == "Successfully auto-authentication") authorization=true
-            println(answer.result)
+        if (answer.result == "Successfully registration" || answer.result == "Successfully auto-authentication") authorization =
+            true
+        println(answer.result)
         clientSocket.close()
     }
 
@@ -58,7 +58,7 @@ class Client {
         return listOfNewCommands
     }
 
-    fun resetNewCommands() {
+    fun clearNewCommands() {
         listOfNewCommands.clear()
     }
 

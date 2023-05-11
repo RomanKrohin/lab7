@@ -23,13 +23,13 @@ class CommandMaxName(workCollection: Collections.Collection<String>) : Command()
      *  @param key
      */
     override fun commandDo(key: String): Answer {
-        val answer= Answer()
+        val answer = Answer()
         return try {
             val studyGroup = collection.collection.values.maxBy { it.getName() }
-            answer.result=(Yaml.default.encodeToString(studyGroup))
+            answer.result = (Yaml.default.encodeToString(studyGroup))
             answer
         } catch (e: RuntimeException) {
-            answer.result="Command exception"
+            answer.result = "Command exception"
             answer
         }
     }

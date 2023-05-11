@@ -14,24 +14,29 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
     val password = workPassword
     val url = workUrl
     val logger = Logger.getLogger("logger")
-    val connection: Connection= DriverManager.getConnection(url, user, password)
+    val connection: Connection = DriverManager.getConnection(url, user, password)
     val SELECT_ALL_STUDYGROUP = connection.prepareStatement("SELECT * FROM roman_schema.studyGroups;")
-    val DELETE_NOTSAVE_GROUPS= connection.prepareStatement("delete from roman_schema.studyGroups where(roman_schema.studyGroups.issave=false);")
-    val DO_STUDYGRIUP_NOTSAVE= connection.prepareStatement("update roman_schema.studyGroups set issave=false where(roman_schema.studyGroups.id=?);")
-    val DO_STUDYGROUP_SAVE= connection.prepareStatement("update roman_schema.studyGroups set issave=true where(roman_schema.studyGroups.id=?);")
-    val REGISTRATE_USER= connection.prepareStatement("insert into roman_schema.users (login, password) values(?, ?)")
-    val CHECK_USER= connection.prepareStatement("select count(*) from roman_schema.users where (login=? and password=?);")
-    val INSERT_STUDYGROUP= connection.prepareStatement("insert into roman_schema.studyGroups " +
-            "(name, coordinates_x, coordinates_y, studentscount, shouldbeexpelled, averagemark, formofeducation, adminname, adminweight, admincolor, admincountry, issave, owner, id) " +
-            "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, nextval('id_seq'));")
+    val DELETE_NOTSAVE_GROUPS =
+        connection.prepareStatement("delete from roman_schema.studyGroups where(roman_schema.studyGroups.issave=false);")
+    val DO_STUDYGRIUP_NOTSAVE =
+        connection.prepareStatement("update roman_schema.studyGroups set issave=false where(roman_schema.studyGroups.id=?);")
+    val DO_STUDYGROUP_SAVE =
+        connection.prepareStatement("update roman_schema.studyGroups set issave=true where(roman_schema.studyGroups.id=?);")
+    val REGISTRATE_USER = connection.prepareStatement("insert into roman_schema.users (login, password) values(?, ?)")
+    val CHECK_USER =
+        connection.prepareStatement("select count(*) from roman_schema.users where (login=? and password=?);")
+    val INSERT_STUDYGROUP = connection.prepareStatement(
+        "insert into roman_schema.studyGroups " +
+                "(name, coordinates_x, coordinates_y, studentscount, shouldbeexpelled, averagemark, formofeducation, adminname, adminweight, admincolor, admincountry, issave, owner, id) " +
+                "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, nextval('id_seq'));"
+    )
 
     fun connect(): Connection {
         try {
             if (!connection.isClosed) {
                 logger.log(Level.INFO, "Successfully connect to database")
                 return connection
-            }
-            else{
+            } else {
                 throw SQLException()
             }
         } catch (e: SQLException) {
@@ -40,7 +45,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         }
     }
 
-    fun deleteNotSaveStudyGroups(connection: Connection){
+    fun deleteNotSaveStudyGroups(connection: Connection) {
         try {
             DELETE_NOTSAVE_GROUPS.execute()
         } catch (e: SQLException) {
@@ -48,7 +53,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         }
     }
 
-    fun doStudyGroupNotSave(id: Long, connection: Connection ){
+    fun doStudyGroupNotSave(id: Long, connection: Connection) {
         try {
             DO_STUDYGRIUP_NOTSAVE.setLong(1, id)
             DELETE_NOTSAVE_GROUPS.execute()
@@ -57,7 +62,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         }
     }
 
-    fun doStudyGroupSave(id: Long, connection: Connection ){
+    fun doStudyGroupSave(id: Long, connection: Connection) {
         try {
             DO_STUDYGROUP_SAVE.setLong(1, id)
             DO_STUDYGROUP_SAVE.execute()
@@ -66,27 +71,25 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         }
     }
 
-    fun registrateUser(login: String, password: String, connection: Connection){
-        try{
+    fun registrateUser(login: String, password: String, connection: Connection) {
+        try {
             REGISTRATE_USER.setString(1, login)
             REGISTRATE_USER.setString(2, password)
             REGISTRATE_USER.execute()
-        }
-        catch (e: SQLException){
+        } catch (e: SQLException) {
             throw e
         }
     }
 
-    fun checkUser(login: String, password: String, connection: Connection): Boolean{
-        try{
+    fun checkUser(login: String, password: String, connection: Connection): Boolean {
+        try {
             CHECK_USER.setString(1, login)
             CHECK_USER.setString(2, password)
-            val resultSet=CHECK_USER.executeQuery()
-            while (resultSet.next()){
-                return (resultSet.getInt("count")==1)
+            val resultSet = CHECK_USER.executeQuery()
+            while (resultSet.next()) {
+                return (resultSet.getInt("count") == 1)
             }
-        }
-        catch (e: SQLException){
+        } catch (e: SQLException) {
             throw e
         }
         return false
@@ -120,11 +123,12 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         val checkModule = CheckModule()
         val listOfStudyGroup = Hashtable<String, StudyGroup>()
         val listOfId = mutableListOf<Long>(0)
-        val resultSet= SELECT_ALL_STUDYGROUP.executeQuery()
+        val resultSet = SELECT_ALL_STUDYGROUP.executeQuery()
         while (resultSet.next()) {
             val name = resultSet.getString("name")
             var formOfEducation: FormOfEducation? = null
-            if (resultSet.getString("formofeducation") != null) formOfEducation = FormOfEducation.valueOf(resultSet.getString("formofeducation"))
+            if (resultSet.getString("formofeducation") != null) formOfEducation =
+                FormOfEducation.valueOf(resultSet.getString("formofeducation"))
             val studyGroup = StudyGroup(
                 resultSet.getLong("id"),
                 name,

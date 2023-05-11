@@ -34,19 +34,19 @@ class CommandInsert(
      *  @param key
      */
     override fun commandDo(key: String): Answer {
-        val answer= Answer()
+        val answer = Answer()
         return try {
             val listOfId = mutableListOf<Long>(0)
-            for (i in collection.collection.values){
+            for (i in collection.collection.values) {
                 listOfId.add(i.getId())
             }
             task.studyGroup?.let {
-                it.setId(listOfId.max()+1)
+                it.setId(listOfId.max() + 1)
                 collection.add(it, key, databaseHandler, connection)
             }
             answer
-        } catch (e: RuntimeException){
-            answer.result="Command exception"
+        } catch (e: RuntimeException) {
+            answer.result = "Command exception"
             answer
         }
     }

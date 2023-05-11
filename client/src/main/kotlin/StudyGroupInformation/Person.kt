@@ -17,11 +17,11 @@ data class Person(
         return weight
     }
 
-    fun getColor(): Color{
+    fun getColor(): Color {
         return color
     }
 
-    fun getCountry() : Country{
+    fun getCountry(): Country {
         return country
     }
 }

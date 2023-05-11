@@ -1,5 +1,5 @@
 import WorkModuls.ReaderOfCommands
 
-fun main(){
+fun main() {
     ReaderOfCommands().readCommand()
 }

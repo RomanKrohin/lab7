@@ -30,16 +30,16 @@ class ReaderOfCommands {
                     readerOfScripts.readScript(commandComponents[1], tokens, mutableListOf())
                 for (i in listOfTasks) {
                     specialActions(i, asker)
-                    client.outputStreamHandler(i)
+                    client.sendTask(i)
                 }
             } else {
                 if (listOfCommands.contains(commandComponents[0])) {
                     val task =
                         Task(commandComponents, listOfCommands = listOfCommands, authorization = client.authorization)
                     specialActions(task, asker)
-                    client.outputStreamHandler(task)
+                    client.sendTask(task)
                     listOfCommands.addAll(client.returnNewCommands())
-                    client.resetNewCommands()
+                    client.clearNewCommands()
                 } else {
                     println("Command ${commandComponents[0]} does not exist")
                 }

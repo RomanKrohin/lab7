@@ -1,5 +1,4 @@
 import Collections.Collection
-import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
 import WorkModuls.DatabaseHandler
 import WorkModuls.ExecutorOfCommands
@@ -43,10 +42,10 @@ class Server(workPort: String) {
             while (serverSocketChannel != null) {
                 val clientSocketChannel = serverSocketChannel.accept()
                 fixJoinPool.submit()
-                { handlerOfInput(clientSocketChannel) }
+                { GetTask(clientSocketChannel) }
                 forkJoinPool.submit()
-                { processRequests(collection, databaseHandler, connection) }
-                var sendThread = Thread { handlerOfOutput(clientSocketChannel) }.start()
+                { processTask(collection, databaseHandler, connection) }
+                var sendThread = Thread { ReturnAnswer(clientSocketChannel) }.start()
             }
             serverSocketChannel?.close()
         } catch (e: RuntimeException) {
@@ -54,7 +53,7 @@ class Server(workPort: String) {
         }
     }
 
-    fun processRequests(collection: Collection<String>, databaseHandler: DatabaseHandler, connection: Connection) {
+    fun processTask(collection: Collection<String>, databaseHandler: DatabaseHandler, connection: Connection) {
         val task = blockingQueueTask.take()
         blockingQueueAnswer.put(
             executorOfCommands.reader(
@@ -68,7 +67,7 @@ class Server(workPort: String) {
         )
     }
 
-    fun handlerOfInput(
+    fun GetTask(
         clientSocketChannel: SocketChannel,
     ) {
         logger.log(Level.INFO, "Получение информации")
@@ -81,7 +80,7 @@ class Server(workPort: String) {
         }
     }
 
-    fun handlerOfOutput(clientSocketChannel: SocketChannel) {
+    fun ReturnAnswer(clientSocketChannel: SocketChannel) {
         logger.log(Level.INFO, "Передача информации")
         try {
             val objectOutputStream = ObjectOutputStream(clientSocketChannel.socket().getOutputStream())

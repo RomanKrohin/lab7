@@ -8,6 +8,6 @@ data class ServerDataInformation(
     val password: String,
     val url: String,
     val port: String,
-): java.io.Serializable{
+) : java.io.Serializable {
 
 }

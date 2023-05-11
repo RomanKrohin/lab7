@@ -4,7 +4,7 @@ import StudyGroupInformation.*
 import java.util.function.Predicate
 
 
-typealias  TypeCaster<T> = (userInput: String) -> T
+typealias TypeCaster<T> = (userInput: String) -> T
 
 /**
  * Класс для работы команды insert. Пошагово вводит поля, запрпашивая от пользователя
@@ -92,7 +92,7 @@ class Asker {
         println("Введите его национальность ${Country.values().map { it.toString() }}")
         val nationality = readType(caster = { toEnumCaster<Country>(it) }, validator = { true })
         return Person(
-            name= name,
+            name = name,
             weight,
             color,
             nationality
@@ -166,10 +166,9 @@ class Asker {
     }
 
 
-    fun askLoginAndPasswordForRegistration():String{
-        return  readType(caster = { it }, validator = {it.isNotEmpty() && it.matches(Regex("[a-zA-Z0-9]{10,}"))})
+    fun askLoginAndPasswordForRegistration(): String {
+        return readType(caster = { it }, validator = { it.isNotEmpty() && it.matches(Regex("[a-zA-Z0-9]{10,}")) })
     }
-
 
 
 }

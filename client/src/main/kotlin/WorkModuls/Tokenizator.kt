@@ -4,7 +4,7 @@ package WorkModuls
 /**
  * Класс для токенизации команд
  */
-class Tokenizator{
+class Tokenizator {
 
     /**
      * Метод для токенизации команд

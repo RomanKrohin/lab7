@@ -3,7 +3,7 @@ package WorkModuls
 import java.io.BufferedReader
 import java.io.FileReader
 
-class ReaderOfScripts{
+class ReaderOfScripts {
     fun readScript(
         path: String,
         tokenizator: Tokenizator,

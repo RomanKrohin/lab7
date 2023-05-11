@@ -24,12 +24,13 @@ class CommandInfo(workCollection: Collection<String>) : Command() {
      *  @param key
      */
     override fun commandDo(key: String): Answer {
-        val answer= Answer()
+        val answer = Answer()
         return try {
-            answer.result=("Collection: HashTable\n" + "Size " + collection.collection.size + "\n" + java.time.LocalTime.now())
+            answer.result =
+                ("Collection: HashTable\n" + "Size " + collection.collection.size + "\n" + java.time.LocalTime.now())
             answer
         } catch (e: RuntimeException) {
-            answer.result="Command exception"
+            answer.result = "Command exception"
             answer
         }
     }

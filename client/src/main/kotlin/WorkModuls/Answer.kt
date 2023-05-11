@@ -10,11 +10,11 @@ import java.io.Serializable
  */
 data class Answer(
     var result: String = "Success\n----------\n",
-): Serializable {
+) : Serializable {
 
-    val listOfNewCommand= mutableListOf<String>()
+    val listOfNewCommand = mutableListOf<String>()
 
-    fun setNewCommands(list: List<String>){
+    fun setNewCommands(list: List<String>) {
         listOfNewCommand.addAll(list)
     }
 }

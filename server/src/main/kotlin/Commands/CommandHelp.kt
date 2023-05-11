@@ -16,7 +16,6 @@ class CommandHelp : Command() {
     override fun commandDo(key: String): Answer {
         val answer= Answer()
         try {
-
             answer.result=(
                 "help : вывести справку по доступным командам\n" +
                         "info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n" +

@@ -24,17 +24,18 @@ class CommandShow(workCollection: Collection<String>) : Command() {
      *  @param key
      */
     override fun commandDo(key: String): Answer {
-        val answer= Answer()
+        val answer = Answer()
         return try {
-            val listOfStudyGroup=collection.collection.values
-            listOfStudyGroup.stream().sorted(Comparator.comparing ( StudyGroup::getName )).collect(Collectors.toList()).forEach {
-                answer.result+="\n----------\n"+Yaml.default.encodeToString(
-                    it
-                )
-            }
+            val listOfStudyGroup = collection.collection.values
+            listOfStudyGroup.stream().sorted(Comparator.comparing(StudyGroup::getName)).collect(Collectors.toList())
+                .forEach {
+                    answer.result += "\n----------\n" + Yaml.default.encodeToString(
+                        it
+                    )
+                }
             answer
         } catch (e: Exception) {
-            answer.result="Command exception"
+            answer.result = "Command exception"
             answer
         }
     }

@@ -17,7 +17,7 @@ class CommandRegistrate(workDatabaseHandler: DatabaseHandler, workConnection: Co
 
     override fun commandDo(key: String): Answer {
         val answer = Answer()
-        answer.result="Successfully registration"
+        answer.result = "Successfully registration"
         return try {
             val components = key.split(" ")
             databaseHandler.registrateUser(components[0], components[1], connection)
@@ -26,6 +26,5 @@ class CommandRegistrate(workDatabaseHandler: DatabaseHandler, workConnection: Co
             answer.result = "Command exception"
             answer
         }
-
     }
 }

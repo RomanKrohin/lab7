@@ -12,7 +12,7 @@ import java.util.stream.Collectors
 /**
  * Класс команды, которая выводит объекты значение поля group admin меньше чем у заданного
  */
-class CommandCountLessThanAdmin(workCollection: Collection<String>) : Command(){
+class CommandCountLessThanAdmin(workCollection: Collection<String>) : Command() {
     var collection: Collection<String>
 
     init {
@@ -29,10 +29,10 @@ class CommandCountLessThanAdmin(workCollection: Collection<String>) : Command(){
         return try {
             collection.collection.values.stream().collect(Collectors.toList())
                 .filter { it -> it.getAdmin().hashCode() < collection.collection.get(key).hashCode() }
-                .forEach { answer.result+"\n"+Yaml.default.encodeToString(it) }
+                .forEach { answer.result + "\n" + Yaml.default.encodeToString(it) }
             answer
         } catch (e: RuntimeException) {
-            answer.result="Command exception"
+            answer.result = "Command exception"
             answer
         }
     }

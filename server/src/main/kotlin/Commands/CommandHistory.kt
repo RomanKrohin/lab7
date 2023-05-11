@@ -22,12 +22,12 @@ class CommandHistory(workCollection: Collection<String>) : Command(){
      */
     override fun commandDo(key: String): Answer {
         val answer= Answer()
-        try {
+        return try {
             answer.result=key
-            return answer
+            answer
         } catch (e: RuntimeException) {
             answer.result = "Command exception"
-            return answer
+            answer
         }
     }
 

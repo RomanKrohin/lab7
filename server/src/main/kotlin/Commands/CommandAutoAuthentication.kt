@@ -18,7 +18,8 @@ class CommandAutoAuthentication(workDatabaseHandler: DatabaseHandler, workConnec
         answer.result = "Successfully auto-authentication"
         return try {
             val components = key.split(" ")
-            if (!databaseHandler.checkUser(components[0], components[1], connection)) answer.result="Wrong password or login"
+            if (!databaseHandler.checkUser(components[0], components[1], connection)) answer.result =
+                "Wrong password or login"
             answer
         } catch (e: RuntimeException) {
             answer.result = "Command exception"
