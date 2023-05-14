@@ -23,10 +23,10 @@ class Collection<String> {
      * @param studyGroup
      * @param key
      */
-    fun add(studyGroup: StudyGroup, key: String, databaseHandler: DatabaseHandler, connection: Connection) {
+    fun add(studyGroup: StudyGroup, key: String, databaseHandler: DatabaseHandler) {
         lock.lock()
         try {
-            databaseHandler.putStudyGroup(studyGroup, connection, studyGroup.isSave)
+            databaseHandler.putStudyGroup(studyGroup, studyGroup.isSave)
             collection[key] = studyGroup
         } finally {
             lock.unlock()
@@ -40,7 +40,7 @@ class Collection<String> {
     fun remove(key: String, databaseHandler: DatabaseHandler, connection: Connection) {
         lock.lock()
         try {
-            collection.get(key)?.let { databaseHandler.doStudyGroupNotSave(it.getId(), connection) }
+            collection.get(key)?.let { databaseHandler.doStudyGroupNotSave(it.getId()) }
             collection.remove(key)
         } finally {
             lock.unlock()

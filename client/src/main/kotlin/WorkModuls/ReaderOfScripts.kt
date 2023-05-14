@@ -6,7 +6,7 @@ import java.io.FileReader
 class ReaderOfScripts {
     fun readScript(
         path: String,
-        tokenizator: Tokenizator,
+        tokenizator: CommandComponentsManager,
         historyOfPaths: MutableList<String>,
     ): MutableList<Task> {
         try {
@@ -16,7 +16,7 @@ class ReaderOfScripts {
                 val listOfTasks = mutableListOf<Task>()
                 while (true) {
                     if (bufferedReader.ready()) {
-                        val components = tokenizator.tokenizateCommand(bufferedReader.readLine())
+                        val components = tokenizator.returnCommandCommand(bufferedReader.readLine())
                         if (components[0] == "execute_script") {
                             val extensionListOfTask = readScript(components[1], tokenizator, historyOfPaths)
                             listOfTasks.addAll(extensionListOfTask)

@@ -1,7 +1,6 @@
 package Commands
 
 import Collections.Collection
-import StudyGroupInformation.StudyGroup
 import WorkModuls.*
 import java.lang.RuntimeException
 import java.sql.Connection
@@ -42,7 +41,7 @@ class CommandInsert(
             }
             task.studyGroup?.let {
                 it.setId(listOfId.max() + 1)
-                collection.add(it, key, databaseHandler, connection)
+                collection.add(it, key, databaseHandler)
             }
             answer
         } catch (e: RuntimeException) {

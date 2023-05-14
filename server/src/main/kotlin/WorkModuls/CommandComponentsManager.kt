@@ -3,9 +3,7 @@ package WorkModuls
 /**
  * Класс для токенизации команд
  */
-class Tokenizator {
-
-    private val history = listOf<String>().toMutableList()
+class CommandComponentsManager {
 
     /**
      * Метод для токенизации команд
@@ -14,7 +12,7 @@ class Tokenizator {
      * @param history
      * @return MutableList<String>
      */
-    fun tokenizateCommand(command: MutableList<String>, history: MutableList<String>): MutableList<String> {
+    fun returnCommandCommand(command: MutableList<String>, history: MutableList<String>): MutableList<String> {
         val commandComponent1 = command
         val commandComponent2: MutableList<String> = listOf<String>().toMutableList()
         for (i in commandComponent1) {

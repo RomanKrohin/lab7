@@ -4,7 +4,7 @@ package WorkModuls
 /**
  * Класс для токенизации команд
  */
-class Tokenizator {
+class CommandComponentsManager {
 
     /**
      * Метод для токенизации команд
@@ -13,8 +13,8 @@ class Tokenizator {
      * @param history
      * @return MutableList<String>
      */
-    fun tokenizateCommand(command: String): MutableList<String> {
-        val commandComponent1 = command.split(" ").toMutableList()
+    fun returnCommandCommand(command: String): MutableList<String> {
+        val commandComponent1 = command.trim().split(" ").toMutableList()
         val commandComponent2: MutableList<String> = listOf<String>().toMutableList()
         for (i in commandComponent1) {
             if (!(i.equals(""))) commandComponent2.add(i)

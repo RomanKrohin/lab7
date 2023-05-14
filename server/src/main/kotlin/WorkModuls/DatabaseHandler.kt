@@ -40,12 +40,12 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
                 throw SQLException()
             }
         } catch (e: SQLException) {
-            logger.log(Level.SEVERE, "Something wrong with database")
+            logger.log(Level.SEVERE, "Something is wrong with database")
             throw e
         }
     }
 
-    fun deleteNotSaveStudyGroups(connection: Connection) {
+    fun deleteNotSaveStudyGroups() {
         try {
             DELETE_NOTSAVE_GROUPS.execute()
         } catch (e: SQLException) {
@@ -53,7 +53,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         }
     }
 
-    fun doStudyGroupNotSave(id: Long, connection: Connection) {
+    fun doStudyGroupNotSave(id: Long) {
         try {
             DO_STUDYGRIUP_NOTSAVE.setLong(1, id)
             DELETE_NOTSAVE_GROUPS.execute()
@@ -62,7 +62,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         }
     }
 
-    fun doStudyGroupSave(id: Long, connection: Connection) {
+    fun doStudyGroupSave(id: Long) {
         try {
             DO_STUDYGROUP_SAVE.setLong(1, id)
             DO_STUDYGROUP_SAVE.execute()
@@ -71,7 +71,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         }
     }
 
-    fun registrateUser(login: String, password: String, connection: Connection) {
+    fun registrateUser(login: String, password: String) {
         try {
             REGISTRATE_USER.setString(1, login)
             REGISTRATE_USER.setString(2, password)
@@ -81,7 +81,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         }
     }
 
-    fun checkUser(login: String, password: String, connection: Connection): Boolean {
+    fun checkUser(login: String, password: String): Boolean {
         try {
             CHECK_USER.setString(1, login)
             CHECK_USER.setString(2, password)
@@ -95,7 +95,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
         return false
     }
 
-    fun putStudyGroup(studyGroup: StudyGroup, connection: Connection, issave: Boolean) {
+    fun putStudyGroup(studyGroup: StudyGroup, issave: Boolean) {
         try {
             INSERT_STUDYGROUP.setString(1, studyGroup.getName())
             INSERT_STUDYGROUP.setFloat(2, studyGroup.getCoordinates().getX().toFloat())
@@ -110,25 +110,23 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
             INSERT_STUDYGROUP.setString(11, studyGroup.getAdmin().getCountry().toString())
             INSERT_STUDYGROUP.setBoolean(12, issave)
             INSERT_STUDYGROUP.setString(13, studyGroup.getOwner())
-            val rowAffected = INSERT_STUDYGROUP.executeUpdate()
-            if (rowAffected == 0) {
-                throw SQLException()
-            }
+            INSERT_STUDYGROUP.execute()
         } catch (e: SQLException) {
             logger.log(Level.SEVERE, "Exception when save Study Group")
         }
     }
 
-    fun getAllStudyGroup(connection: Connection): Hashtable<String, StudyGroup> {
+    fun getAllStudyGroup(): Hashtable<String, StudyGroup> {
         val checkModule = CheckModule()
         val listOfStudyGroup = Hashtable<String, StudyGroup>()
-        val listOfId = mutableListOf<Long>(0)
         val resultSet = SELECT_ALL_STUDYGROUP.executeQuery()
         while (resultSet.next()) {
             val name = resultSet.getString("name")
             var formOfEducation: FormOfEducation? = null
-            if (resultSet.getString("formofeducation") != null) formOfEducation =
-                FormOfEducation.valueOf(resultSet.getString("formofeducation"))
+            if (resultSet.getString("formofeducation") != "null") {
+                formOfEducation =
+                    FormOfEducation.valueOf(resultSet.getString("formofeducation"))
+            }
             val studyGroup = StudyGroup(
                 resultSet.getLong("id"),
                 name,

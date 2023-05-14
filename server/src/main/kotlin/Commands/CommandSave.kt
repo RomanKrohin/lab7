@@ -33,10 +33,10 @@ class CommandSave(
         return try {
             collection.collection.values.stream().forEach {
                 it.isSave = true
-                databaseHandler.doStudyGroupSave(it.getId(), connection)
+                databaseHandler.doStudyGroupSave(it.getId())
 
             }
-            databaseHandler.deleteNotSaveStudyGroups(connection)
+            databaseHandler.deleteNotSaveStudyGroups()
             answer
         } catch (e: RuntimeException) {
             answer.result = "Command exception"

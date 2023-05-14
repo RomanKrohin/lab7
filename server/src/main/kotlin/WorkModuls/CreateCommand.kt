@@ -18,5 +18,6 @@ interface CreateCommand {
         collection: Collections.Collection<String>,
         history: MutableList<String>,
         task: Task, databaseHandler: DatabaseHandler, connection: Connection,
+        tokenManager: TokenManager
     ): Map<String, Command>
 }

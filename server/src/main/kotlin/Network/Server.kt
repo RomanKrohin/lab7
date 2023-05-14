@@ -1,8 +1,5 @@
 import Collections.Collection
-import WorkModuls.Answer
-import WorkModuls.DatabaseHandler
-import WorkModuls.ExecutorOfCommands
-import WorkModuls.Task
+import WorkModuls.*
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.InetSocketAddress
@@ -18,8 +15,9 @@ import java.util.logging.Logger
 class Server(workPort: String) {
 
     val logger = Logger.getLogger("logger")
-    val executorOfCommands = ExecutorOfCommands()
-    val port: String = workPort
+    private val executorOfCommands = ExecutorOfCommands()
+    private val tokenManager= TokenManager()
+    private val port: String = workPort
     private val fixJoinPool = Executors.newFixedThreadPool(10)
     private val forkJoinPool = ForkJoinPool.commonPool()
     private val blockingQueueTask = LinkedBlockingQueue<Task>()
@@ -42,10 +40,10 @@ class Server(workPort: String) {
             while (serverSocketChannel != null) {
                 val clientSocketChannel = serverSocketChannel.accept()
                 fixJoinPool.submit()
-                { GetTask(clientSocketChannel) }
+                { getTask(clientSocketChannel) }
                 forkJoinPool.submit()
                 { processTask(collection, databaseHandler, connection) }
-                var sendThread = Thread { ReturnAnswer(clientSocketChannel) }.start()
+                Thread { ReturnAnswer(clientSocketChannel) }.start()
             }
             serverSocketChannel?.close()
         } catch (e: RuntimeException) {
@@ -53,21 +51,7 @@ class Server(workPort: String) {
         }
     }
 
-    fun processTask(collection: Collection<String>, databaseHandler: DatabaseHandler, connection: Connection) {
-        val task = blockingQueueTask.take()
-        blockingQueueAnswer.put(
-            executorOfCommands.reader(
-                collection,
-                task.describe,
-                task,
-                task.listOfCommands,
-                databaseHandler,
-                connection
-            )
-        )
-    }
-
-    fun GetTask(
+    fun getTask(
         clientSocketChannel: SocketChannel,
     ) {
         logger.log(Level.INFO, "Получение информации")
@@ -80,6 +64,19 @@ class Server(workPort: String) {
         }
     }
 
+    fun processTask(collection: Collection<String>, databaseHandler: DatabaseHandler, connection: Connection) {
+        val task = blockingQueueTask.take()
+        blockingQueueAnswer.put(
+            executorOfCommands.reader(
+                collection,
+                task.describe,
+                task,
+                task.listOfCommands,
+                databaseHandler,
+                connection, tokenManager
+            )
+        )
+    }
     fun ReturnAnswer(clientSocketChannel: SocketChannel) {
         logger.log(Level.INFO, "Передача информации")
         try {

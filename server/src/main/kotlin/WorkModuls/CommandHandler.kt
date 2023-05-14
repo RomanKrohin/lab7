@@ -2,6 +2,7 @@ package WorkModuls
 
 import Collections.Collection
 import Commands.*
+import StudyGroupInformation.StudyGroup
 import java.sql.Connection
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -19,10 +20,11 @@ class CommandHandler(
     history: MutableList<String>,
     task: Task,
     databaseHandler: DatabaseHandler, connection: Connection,
+    tokenManager: TokenManager
 ) : CreateCommand {
-    private var listOfCommand = createCommands(collection, history, task, databaseHandler, connection)
+    private var listOfCommand = createCommands(collection, history, task, databaseHandler, connection, tokenManager)
     private val logger = Logger.getLogger("logger")
-
+    private var collection = mapOf<String, StudyGroup>()
 
     /**
      * Метод выборки команд
@@ -49,6 +51,7 @@ class CommandHandler(
         task: Task,
         databaseHandler: DatabaseHandler,
         connection: Connection,
+        tokenManager: TokenManager
     ): Map<String, Command> {
         return mapOf<String, Command>(
             "show" to CommandShow(collection),
@@ -65,8 +68,9 @@ class CommandHandler(
             "remove" to CommandRemove(collection, databaseHandler, connection, task),
             "update id" to CommandUpdateId(collection, task),
             "insert" to CommandInsert(collection, databaseHandler, connection, task),
-            "registration" to CommandRegistrate(databaseHandler, connection),
-            "auto-authentication" to CommandAutoAuthentication(databaseHandler, connection)
+            "registration" to CommandRegistrate(databaseHandler, connection, tokenManager),
+            "auto-authentication" to CommandAutoAuthentication(databaseHandler, connection, tokenManager),
+            "log_out" to CommandLogOut(databaseHandler, connection, tokenManager)
         )
     }
 

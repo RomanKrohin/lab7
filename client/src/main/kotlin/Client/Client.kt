@@ -11,7 +11,7 @@ class Client {
     val listOfNewCommands = mutableListOf<String>()
     var authorization: Boolean = false
     var login = ""
-    var password = ""
+    var token = ""
 
     fun connection(): SocketChannel {
         return try {
@@ -33,8 +33,11 @@ class Client {
                 if (task.describe[0] == "registration" || task.describe[0] == "auto-authentication") putLoginAndPassword(
                     task
                 )
+                if (task.describe[0]=="log_out"){
+                    task.describe.add(token)
+                }
                 task.login = login
-                task.password = password
+                task.token = token
                 objectOutputStream.writeObject(task)
                 getAnswer(clientSocket)
 
@@ -48,8 +51,9 @@ class Client {
         val objectInputStream = ObjectInputStream(clientSocket.socket().getInputStream())
         val answer = objectInputStream.readObject() as Answer
         listOfNewCommands.addAll(answer.listOfNewCommand)
-        if (answer.result == "Successfully registration" || answer.result == "Successfully auto-authentication") authorization =
-            true
+        if (answer.result.split(" ").contains("token")) {
+            token=answer.result.split(" ").last()
+        }
         println(answer.result)
         clientSocket.close()
     }
@@ -63,8 +67,8 @@ class Client {
     }
 
     fun putLoginAndPassword(task: Task) {
-        val components = task.describe[1].split(" ")
+        val components = task.describe[1].trim().split(" ")
         login = components[0]
-        password = components[1]
+        token = components[1]
     }
 }

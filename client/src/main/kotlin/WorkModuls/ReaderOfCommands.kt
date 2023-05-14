@@ -20,11 +20,11 @@ class ReaderOfCommands {
      * @param path
      */
     fun readCommand() {
-        val tokens = Tokenizator()
+        val tokens = CommandComponentsManager()
         val readerOfScripts = ReaderOfScripts()
         while (true) {
             val command = asker.askCommand()
-            val commandComponents = tokens.tokenizateCommand(command)
+            val commandComponents = tokens.returnCommandCommand(command)
             if (commandComponents[0] == "execute_script") {
                 val listOfTasks =
                     readerOfScripts.readScript(commandComponents[1], tokens, mutableListOf())
@@ -35,7 +35,7 @@ class ReaderOfCommands {
             } else {
                 if (listOfCommands.contains(commandComponents[0])) {
                     val task =
-                        Task(commandComponents, listOfCommands = listOfCommands, authorization = client.authorization)
+                        Task(commandComponents, listOfCommands = listOfCommands)
                     specialActions(task, asker)
                     client.sendTask(task)
                     listOfCommands.addAll(client.returnNewCommands())
