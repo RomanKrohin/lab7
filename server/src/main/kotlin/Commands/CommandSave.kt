@@ -34,7 +34,6 @@ class CommandSave(
             collection.collection.values.stream().forEach {
                 it.isSave = true
                 databaseHandler.doStudyGroupSave(it.getId())
-
             }
             databaseHandler.deleteNotSaveStudyGroups()
             answer

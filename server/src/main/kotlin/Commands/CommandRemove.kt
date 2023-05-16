@@ -39,7 +39,7 @@ class CommandRemove(
     override fun commandDo(key: String): Answer {
         val answer = Answer()
         return try {
-            collection.remove(key.uppercase(), databaseHandler, connection)
+            collection.remove(key.uppercase(), databaseHandler)
             answer
         } catch (e: RuntimeException) {
             answer.result = "Command exception"

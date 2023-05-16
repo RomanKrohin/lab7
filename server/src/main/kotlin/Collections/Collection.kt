@@ -37,10 +37,11 @@ class Collection<String> {
      * Метод удаления объекта из коллекции
      * @param key
      */
-    fun remove(key: String, databaseHandler: DatabaseHandler, connection: Connection) {
+    fun remove(key: String, databaseHandler: DatabaseHandler) {
         lock.lock()
         try {
-            collection.get(key)?.let { databaseHandler.doStudyGroupNotSave(it.getId()) }
+            collection.get(key)?.let { databaseHandler.doStudyGroupNotSave(it.getId())
+            }
             collection.remove(key)
         } finally {
             lock.unlock()

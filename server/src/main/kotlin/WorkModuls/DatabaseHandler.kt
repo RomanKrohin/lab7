@@ -28,7 +28,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
     val INSERT_STUDYGROUP = connection.prepareStatement(
         "insert into roman_schema.studyGroups " +
                 "(name, coordinates_x, coordinates_y, studentscount, shouldbeexpelled, averagemark, formofeducation, adminname, adminweight, admincolor, admincountry, issave, owner, id) " +
-                "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, nextval('id_seq'));"
+                "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
     )
 
     fun connect(): Connection {
@@ -56,7 +56,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
     fun doStudyGroupNotSave(id: Long) {
         try {
             DO_STUDYGRIUP_NOTSAVE.setLong(1, id)
-            DELETE_NOTSAVE_GROUPS.execute()
+            DO_STUDYGRIUP_NOTSAVE.execute()
         } catch (e: SQLException) {
             throw e
         }
@@ -110,6 +110,7 @@ class DatabaseHandler(workUser: String, workPassword: String, workUrl: String) {
             INSERT_STUDYGROUP.setString(11, studyGroup.getAdmin().getCountry().toString())
             INSERT_STUDYGROUP.setBoolean(12, issave)
             INSERT_STUDYGROUP.setString(13, studyGroup.getOwner())
+            INSERT_STUDYGROUP.setLong(14, studyGroup.getId())
             INSERT_STUDYGROUP.execute()
         } catch (e: SQLException) {
             logger.log(Level.SEVERE, "Exception when save Study Group")

@@ -45,7 +45,7 @@ class CommandDeleteByMinKey(
                         it.hashCode() < key.uppercase().hashCode() && collection.collection.get(it)
                             ?.getOwner() == task.login
                     }.forEach {
-                        collection.remove(it, databaseHandler, connection)
+                        collection.remove(it, databaseHandler)
                     }
             }
             return answer
