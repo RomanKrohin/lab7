@@ -23,11 +23,16 @@ class CommandRegistrate(workDatabaseHandler: DatabaseHandler, workConnection: Co
         return try {
             val components = key.split(" ")
             val token = sha384(
-                components[0].subSequence(0, 9).toString() + components[0].subSequence(0, 9).toString()
+                components[0].subSequence(0, 9).toString() + components[1].subSequence(0, 9).toString()
             ).subSequence(0, 9).toString()
-            tokenManager.createToken(token)
-            answer.result = "Successfully registration. Your token is: ${token}"
-            databaseHandler.registrateUser(components[0], components[1])
+            if (tokenManager.getToken(token)==null && databaseHandler.checkUser(components[0], components[1])) {
+                tokenManager.createToken(token)
+                answer.result = "Successfully registration. Your token is: ${token}"
+                databaseHandler.registrateUser(components[0], components[1])
+            }
+            else{
+                answer.result="This account already exists"
+            }
             answer
         } catch (e: RuntimeException) {
             answer.result = "Command exception"

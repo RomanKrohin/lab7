@@ -23,6 +23,7 @@ class ReaderOfCommands {
         val tokens = CommandComponentsManager()
         val readerOfScripts = ReaderOfScripts()
         while (true) {
+            print("> ")
             val command = asker.askCommand()
             val commandComponents = tokens.returnCommandCommand(command)
             if (commandComponents[0] == "execute_script") {

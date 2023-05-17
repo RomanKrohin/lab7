@@ -26,12 +26,21 @@ class CommandAutoAuthentication(
         return try {
             val components = key.split(" ")
             val token = sha384(
-                components[0].subSequence(0, 9).toString() + components[0].subSequence(0, 9).toString()
+                components[0].subSequence(0, 9).toString() + components[1].subSequence(0, 9).toString()
             ).subSequence(0, 9).toString()
-            tokenManager.createToken(token)
-            answer.result = "Successfully auto-authentication. Your token is: ${token}"
-            if (!databaseHandler.checkUser(components[0], components[1])) answer.result =
-                "Wrong password or login"
+            if (!databaseHandler.checkUser(components[0], components[1])) {
+                answer.result =
+                    "Wrong password or login"
+            }
+            else{
+                if (tokenManager.getToken(token)!=null){
+                    answer.result="This account already used"
+                }
+                else {
+                    tokenManager.createToken(token)
+                    answer.result = "Successfully auto-authentication. Your token is: ${token}"
+                }
+            }
             answer
         } catch (e: RuntimeException) {
             answer.result = "Command exception"
