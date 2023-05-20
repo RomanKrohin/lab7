@@ -9,12 +9,10 @@ import java.util.stream.Collectors
 /**
  * Класс команды, которая обновляет id объекта коллекции по его ключу
  */
-class CommandUpdateId(workCollection: Collection<String>, workTask: Task) : Command() {
-    var task: Task
+class CommandUpdateId(workCollection: Collection<String>) : Command() {
     var collection: Collection<String>
 
     init {
-        task = workTask
         collection = workCollection
     }
 
@@ -23,7 +21,7 @@ class CommandUpdateId(workCollection: Collection<String>, workTask: Task) : Comm
      *  @param collection
      *  @param key
      */
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         return try {
             val answer = Answer()
             val components = key.split(" ")

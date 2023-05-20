@@ -12,16 +12,19 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class Server(workPort: String) {
+class Server(workPort: String, workCollection: Collection<String>, workDatabaseHandler: DatabaseHandler, workConnection: Connection) {
 
     val logger = Logger.getLogger("logger")
-    private val executorOfCommands = ExecutorOfCommands()
     private val tokenManager= TokenManager()
     private val port: String = workPort
+    private val collection= workCollection
+    private val databaseHandler= workDatabaseHandler
+    private val connection= workConnection
     private val fixJoinPool = Executors.newFixedThreadPool(10)
     private val forkJoinPool = ForkJoinPool.commonPool()
     private val blockingQueueTask = LinkedBlockingQueue<Task>()
     private val blockingQueueAnswer = LinkedBlockingQueue<Answer>()
+    private val executorOfCommands = ExecutorOfCommands(collection, databaseHandler, connection, tokenManager)
 
     init {
         logger.log(Level.INFO, "Старт сервера")
@@ -29,9 +32,6 @@ class Server(workPort: String) {
 
 
     fun startSever(
-        collection: Collection<String>,
-        databaseHandler: DatabaseHandler,
-        connection: Connection,
     ) {
         logger.log(Level.INFO, "Ожидание подключения")
         try {
@@ -42,7 +42,7 @@ class Server(workPort: String) {
                 fixJoinPool.submit()
                 { getTask(clientSocketChannel) }
                 forkJoinPool.submit()
-                { processTask(collection, databaseHandler, connection) }
+                { processTask() }
                 Thread { ReturnAnswer(clientSocketChannel) }.start()
             }
             serverSocketChannel?.close()
@@ -64,16 +64,13 @@ class Server(workPort: String) {
         }
     }
 
-    fun processTask(collection: Collection<String>, databaseHandler: DatabaseHandler, connection: Connection) {
+    fun processTask() {
         val task = blockingQueueTask.take()
         blockingQueueAnswer.put(
             executorOfCommands.reader(
-                collection,
                 task.describe,
                 task,
-                task.listOfCommands,
-                databaseHandler,
-                connection, tokenManager
+                task.listOfCommands
             )
         )
     }

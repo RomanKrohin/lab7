@@ -1,6 +1,7 @@
 package Commands
 
 import WorkModuls.Answer
+import WorkModuls.Task
 
 /**
  * Класс-родитель команд
@@ -12,6 +13,6 @@ abstract class Command() {
      *  @param collection
      *  @param key
      */
-    abstract fun commandDo(key: String): Answer
+    abstract fun commandDo(key: String, task: Task): Answer
 
 }

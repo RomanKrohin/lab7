@@ -3,6 +3,7 @@ package Commands
 import Collections.Collection
 import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
+import WorkModuls.Task
 import java.lang.RuntimeException
 
 /**
@@ -20,7 +21,7 @@ class CommandHistory(workCollection: Collection<String>) : Command(){
      *  @param collection
      *  @param key
      */
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         val answer= Answer()
         return try {
             answer.result=key

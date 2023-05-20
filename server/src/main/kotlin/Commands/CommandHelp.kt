@@ -1,6 +1,7 @@
 package Commands
 
 import WorkModuls.Answer
+import WorkModuls.Task
 import java.lang.RuntimeException
 
 /**
@@ -13,7 +14,7 @@ class CommandHelp : Command() {
      *  @param collection
      *  @param key
      */
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         val answer= Answer()
         try {
             answer.result=(

@@ -32,8 +32,8 @@ fun readData(): ServerDataInformation {
 }
 
 fun executeStartServer(collection: Collection<String>, databaseHandler: DatabaseHandler, connection: Connection, port: String) {
-    val server = Server(port)
+    val server = Server(port, collection, databaseHandler, connection)
     Thread {
-        server.startSever(collection, databaseHandler, connection)
+        server.startSever()
     }.start()
 }

@@ -17,15 +17,12 @@ class CommandDeleteByMaxKey(
     workCollection: Collection<String>,
     workDatabaseHandler: DatabaseHandler,
     workConnection: Connection,
-    workTask: Task,
 ) : Command() {
-    var task: Task
     var collection: Collection<String>
     var databaseHandler: DatabaseHandler
     var connection: Connection
 
     init {
-        task = workTask
         collection = workCollection
         databaseHandler = workDatabaseHandler
         connection = workConnection
@@ -36,7 +33,7 @@ class CommandDeleteByMaxKey(
      *  @param collection
      *  @param key
      */
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         val answer = Answer()
         try {
             if (collection.collection.keys.contains(key.uppercase(Locale.getDefault()))) {

@@ -3,6 +3,7 @@ package Commands
 import Collections.Collection
 import WorkModuls.Answer
 import WorkModuls.DatabaseHandler
+import WorkModuls.Task
 import java.sql.Connection
 
 /**
@@ -28,7 +29,7 @@ class CommandSave(
      *  @param collection
      *  @param key
      */
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         val answer = Answer()
         return try {
             collection.collection.values.stream().forEach {

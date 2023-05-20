@@ -2,7 +2,6 @@ package Collections
 
 import StudyGroupInformation.StudyGroup
 import WorkModuls.DatabaseHandler
-import java.sql.Connection
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 
@@ -47,5 +46,4 @@ class Collection<String> {
             lock.unlock()
         }
     }
-    //
 }

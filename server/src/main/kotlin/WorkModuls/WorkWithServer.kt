@@ -1,7 +1,6 @@
 package WorkModuls
 
 import Collections.Collection
-import StudyGroupInformation.StudyGroup
 
 /**
  * Класс начала выборки команды

@@ -1,8 +1,6 @@
 package WorkModuls
 
 import Commands.Command
-import StudyGroupInformation.StudyGroup
-import java.nio.channels.SocketChannel
 import java.sql.Connection
 
 /**
@@ -17,7 +15,7 @@ interface CreateCommand {
     fun createCommands(
         collection: Collections.Collection<String>,
         history: MutableList<String>,
-        task: Task, databaseHandler: DatabaseHandler, connection: Connection,
+        databaseHandler: DatabaseHandler, connection: Connection,
         tokenManager: TokenManager
     ): Map<String, Command>
 }

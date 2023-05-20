@@ -9,12 +9,13 @@ import java.util.logging.Logger
 /**
  * Класс для чтения, выборки и вывода результатов команд
  */
-class ExecutorOfCommands : WorkWithHistory {
+class ExecutorOfCommands(collection: Collection<String>, databaseHandler: DatabaseHandler, connection: Connection, workTokenManager: TokenManager) : WorkWithHistory {
 
     private val history = listOf<String>().toMutableList()
     private val logger = Logger.getLogger("logger")
     val tokens = CommandComponentsManager()
-
+    private val tokenManager= workTokenManager
+    val commandHandler = CommandHandler(collection, history, databaseHandler, connection, tokenManager)
 
     /**
      * Класс для чтения, выборки и вывода результатов команд
@@ -22,17 +23,15 @@ class ExecutorOfCommands : WorkWithHistory {
      * @param path
      */
     fun reader(
-        collection: Collection<String>,
         command: MutableList<String>,
         task: Task,
-        listOfOldCommand: MutableList<String>, databaseHandler: DatabaseHandler, connection: Connection, tokenManager: TokenManager
+        listOfOldCommand: MutableList<String>
     ): Answer {
         logger.log(Level.INFO, "Чтение команды")
         return if (tokenManager.getToken(task.token)!=null  || task.describe[0] == "registration" || task.describe[0] == "auto-authentication") {
             workWithArrayHistory(command)
-            val commandHandler = CommandHandler(collection, history, task, databaseHandler, connection, tokenManager)
             val commandComponents = tokens.returnCommandCommand(command, history)
-            val answer = commandHandler.chooseCoomand(commandComponents, listOfOldCommand)
+            val answer = commandHandler.chooseCoomand(commandComponents, listOfOldCommand, task)
             logger.log(Level.INFO, "Перенаправка ответа")
             answer
         } else {

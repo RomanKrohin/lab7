@@ -10,12 +10,10 @@ import java.util.stream.Collectors
 /**
  * Класс команды очищающая коллекцию
  */
-class CommandClear(workCollection: Collection<String>, workTask: Task) : Command() {
-    var task: Task
+class CommandClear(workCollection: Collection<String>) : Command() {
     var collection: Collection<String>
 
     init {
-        task = workTask
         collection = workCollection
     }
 
@@ -24,7 +22,7 @@ class CommandClear(workCollection: Collection<String>, workTask: Task) : Command
      *  @param collection
      *  @param key
      */
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         val answer = Answer()
         return try {
             collection.collection.keys.stream().collect(Collectors.toList())

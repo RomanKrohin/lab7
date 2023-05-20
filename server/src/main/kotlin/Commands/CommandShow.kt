@@ -3,6 +3,7 @@ package Commands
 import Collections.Collection
 import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
+import WorkModuls.Task
 import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.encodeToString
 import java.util.stream.Collectors
@@ -23,7 +24,7 @@ class CommandShow(workCollection: Collection<String>) : Command() {
      *  @param collection
      *  @param key
      */
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         val answer = Answer()
         return try {
             val listOfStudyGroup = collection.collection.values

@@ -4,6 +4,7 @@ import Collections.Collection
 import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
 import WorkModuls.DatabaseHandler
+import WorkModuls.Task
 import WorkModuls.TokenManager
 import java.security.MessageDigest
 import java.sql.Connection
@@ -18,7 +19,7 @@ class CommandRegistrate(workDatabaseHandler: DatabaseHandler, workConnection: Co
         tokenManager=workTokenManager
     }
 
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         val answer = Answer()
         return try {
             val components = key.split(" ")

@@ -3,6 +3,7 @@ package Commands
 import Collections.Collection
 import StudyGroupInformation.StudyGroup
 import WorkModuls.Answer
+import WorkModuls.Task
 import java.lang.RuntimeException
 import java.util.stream.Collectors
 
@@ -21,7 +22,7 @@ class CommandPrintFieldDescendingAverageMark(workCollection: Collections.Collect
      *  @param collection
      *  @param key
      */
-    override fun commandDo(key: String): Answer {
+    override fun commandDo(key: String, task: Task): Answer {
         val answer = Answer()
         try {
             answer.result = (collection.collection.values.stream().map { it -> it.getAverageMark() }
