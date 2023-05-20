@@ -27,11 +27,12 @@ class ReaderOfCommands {
             val command = asker.askCommand()
             val commandComponents = tokens.returnCommandCommand(command)
             if (commandComponents[0] == "execute_script") {
-                val listOfTasks =
+                val listOfCommandsScript =
                     readerOfScripts.readScript(commandComponents[1], tokens, mutableListOf())
-                for (i in listOfTasks) {
-                    specialActions(i, asker)
-                    client.sendTask(i)
+                for (i in listOfCommandsScript) {
+                    val task= Task(i, listOfCommands = listOfCommands)
+                    specialActions(Task(i), asker)
+                    client.sendTask(task)
                 }
             } else {
                 if (listOfCommands.contains(commandComponents[0])) {
@@ -50,6 +51,7 @@ class ReaderOfCommands {
 
     fun specialActions(task: Task, asker: Asker) {
         if (task.describe[0] == "exit") {
+            client.sendTask(Task(mutableListOf("log_out"), listOfCommands = listOfCommands))
             exitProcess(0)
         }
         if (task.describe[0] == "update id") {

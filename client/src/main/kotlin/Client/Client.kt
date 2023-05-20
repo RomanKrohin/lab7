@@ -9,7 +9,6 @@ import java.nio.channels.SocketChannel
 class Client {
 
     val listOfNewCommands = mutableListOf<String>()
-    var authorization: Boolean = false
     var login = ""
     var token = ""
 
